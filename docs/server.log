@@ -1,0 +1,11 @@
+=== server ===
+
+GET Kelompok-1 404 in 829 ms 
+
+===  Client   ==== 
+
+Error
+Network error - Periksa koneksi internet
+
+Access to fetch at 'https://rental-baju.netlify.app/api/public/products?page=1&limit=12&status=AVAILABLE' from origin 'http://localhost:3000' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.Understand this error
+rental-baju.netlify.app/api/public/products?page=1&limit=12&status=AVAILABLE:1  Failed to load resource: net::ERR_FAILEDUnderstand this error
