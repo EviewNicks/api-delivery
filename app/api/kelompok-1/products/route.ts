@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 
 const EXTERNAL_API = 'https://rental-baju.netlify.app/api/public/products';
-const TIMEOUT = 10000;
+const TIMEOUT = 20000;
 
 async function fetchWithTimeout(url: string, timeout = TIMEOUT): Promise<Response> {
   const controller = new AbortController();

@@ -226,12 +226,206 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
           </div>
         )}
 
+        {/* Product Specifications */}
+        <div className="bg-white border border-neutral-200 rounded-lg p-6 mb-8">
+          <h3 className="font-semibold text-neutral-800 mb-4 text-lg">Spesifikasi Produk</h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="flex justify-between py-2 border-b border-neutral-100">
+              <span className="text-neutral-600">Material</span>
+              <span className="font-medium text-neutral-800">Premium Cotton Blend</span>
+            </div>
+            <div className="flex justify-between py-2 border-b border-neutral-100">
+              <span className="text-neutral-600">Kondisi</span>
+              <span className="font-medium text-neutral-800">Like New</span>
+            </div>
+            <div className="flex justify-between py-2 border-b border-neutral-100">
+              <span className="text-neutral-600">Berat</span>
+              <span className="font-medium text-neutral-800">0.5 kg</span>
+            </div>
+            <div className="flex justify-between py-2 border-b border-neutral-100">
+              <span className="text-neutral-600">Perawatan</span>
+              <span className="font-medium text-neutral-800">Dry Clean Only</span>
+            </div>
+            <div className="flex justify-between py-2 border-b border-neutral-100">
+              <span className="text-neutral-600">Tahun Produksi</span>
+              <span className="font-medium text-neutral-800">2024</span>
+            </div>
+            <div className="flex justify-between py-2 border-b border-neutral-100">
+              <span className="text-neutral-600">Brand</span>
+              <span className="font-medium text-neutral-800">Local Premium</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Customer Reviews */}
+        <div className="bg-white border border-neutral-200 rounded-lg p-6 mb-8">
+          <div className="flex items-center justify-between mb-6">
+            <h3 className="font-semibold text-neutral-800 text-lg">Ulasan Pelanggan</h3>
+            <div className="flex items-center gap-2">
+              <span className="text-2xl font-bold text-neutral-800">4.8</span>
+              <div className="flex text-yellow-500">
+                {'★★★★★'.split('').map((star, i) => (
+                  <span key={i}>{star}</span>
+                ))}
+              </div>
+              <span className="text-sm text-neutral-500">(24 ulasan)</span>
+            </div>
+          </div>
+
+          <div className="space-y-4">
+            {/* Review 1 */}
+            <div className="border-b border-neutral-100 pb-4">
+              <div className="flex items-start justify-between mb-2">
+                <div>
+                  <p className="font-medium text-neutral-800">Sarah K.</p>
+                  <div className="flex text-yellow-500 text-sm">★★★★★</div>
+                </div>
+                <span className="text-sm text-neutral-500">2 minggu lalu</span>
+              </div>
+              <p className="text-neutral-600 text-sm">
+                Kualitas baju sangat bagus, sesuai dengan foto. Proses penyewaan mudah dan pelayanan ramah. Sangat recommended!
+              </p>
+            </div>
+
+            {/* Review 2 */}
+            <div className="border-b border-neutral-100 pb-4">
+              <div className="flex items-start justify-between mb-2">
+                <div>
+                  <p className="font-medium text-neutral-800">Andi Prasetyo</p>
+                  <div className="flex text-yellow-500 text-sm">★★★★☆</div>
+                </div>
+                <span className="text-sm text-neutral-500">1 bulan lalu</span>
+              </div>
+              <p className="text-neutral-600 text-sm">
+                Bajunya bagus dan bersih. Ukuran sesuai. Hanya saja proses pengambilan agak lama karena antrian.
+              </p>
+            </div>
+
+            {/* Review 3 */}
+            <div className="pb-4">
+              <div className="flex items-start justify-between mb-2">
+                <div>
+                  <p className="font-medium text-neutral-800">Maya Sari</p>
+                  <div className="flex text-yellow-500 text-sm">★★★★★</div>
+                </div>
+                <span className="text-sm text-neutral-500">2 bulan lalu</span>
+              </div>
+              <p className="text-neutral-600 text-sm">
+                Perfect untuk acara formal! Bahan premium dan fitting nya pas. Pasti akan sewa lagi untuk acara berikutnya.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* Rental History Timeline */}
+        <div className="bg-white border border-neutral-200 rounded-lg p-6 mb-8">
+          <h3 className="font-semibold text-neutral-800 mb-4 text-lg">Riwayat Penyewaan</h3>
+          <div className="space-y-4">
+            <div className="flex items-start gap-4">
+              <div className="flex flex-col items-center">
+                <div className="w-3 h-3 bg-green-500 rounded-full"></div>
+                <div className="w-0.5 h-16 bg-neutral-200"></div>
+              </div>
+              <div className="flex-1">
+                <p className="font-medium text-neutral-800">Tersedia Sekarang</p>
+                <p className="text-sm text-neutral-500">Produk siap disewa</p>
+              </div>
+              <span className="text-sm text-neutral-500">Hari ini</span>
+            </div>
+
+            <div className="flex items-start gap-4">
+              <div className="flex flex-col items-center">
+                <div className="w-3 h-3 bg-blue-500 rounded-full"></div>
+                <div className="w-0.5 h-16 bg-neutral-200"></div>
+              </div>
+              <div className="flex-1">
+                <p className="font-medium text-neutral-800">Disewa oleh Customer</p>
+                <p className="text-sm text-neutral-500">Acara: Pernikahan</p>
+              </div>
+              <span className="text-sm text-neutral-500">2 minggu lalu</span>
+            </div>
+
+            <div className="flex items-start gap-4">
+              <div className="flex flex-col items-center">
+                <div className="w-3 h-3 bg-blue-500 rounded-full"></div>
+                <div className="w-0.5 h-16 bg-neutral-200"></div>
+              </div>
+              <div className="flex-1">
+                <p className="font-medium text-neutral-800">Maintenance & Cleaning</p>
+                <p className="text-sm text-neutral-500">Deep cleaning dan quality check</p>
+              </div>
+              <span className="text-sm text-neutral-500">1 bulan lalu</span>
+            </div>
+
+            <div className="flex items-start gap-4">
+              <div className="flex flex-col items-center">
+                <div className="w-3 h-3 bg-blue-500 rounded-full"></div>
+              </div>
+              <div className="flex-1">
+                <p className="font-medium text-neutral-800">Disewa oleh Customer</p>
+                <p className="text-sm text-neutral-500">Acara: Wisuda</p>
+              </div>
+              <span className="text-sm text-neutral-500">2 bulan lalu</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Related Products */}
+        <div className="mb-8">
+          <h3 className="font-semibold text-neutral-800 mb-4 text-lg">Produk Serupa</h3>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            {[1, 2, 3, 4].map((item) => (
+              <div
+                key={item}
+                className="bg-white border border-neutral-200 rounded-lg p-4 hover:shadow-md transition cursor-pointer"
+              >
+                <div className="w-full h-32 bg-neutral-200 rounded mb-3"></div>
+                <p className="font-medium text-neutral-800 text-sm mb-1">Produk Serupa {item}</p>
+                <p className="text-primary-600 font-semibold text-sm">Rp 150.000</p>
+                <span className="inline-block mt-2 px-2 py-1 rounded text-xs bg-green-100 text-green-800">
+                  Tersedia
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Rental Terms */}
+        <div className="bg-primary-50 border border-primary-200 rounded-lg p-6 mb-8">
+          <h3 className="font-semibold text-neutral-800 mb-3 text-lg">Syarat & Ketentuan Penyewaan</h3>
+          <ul className="space-y-2 text-sm text-neutral-700">
+            <li className="flex items-start gap-2">
+              <span className="text-primary-600 mt-1">•</span>
+              <span>Minimal penyewaan 1 hari, maksimal 7 hari</span>
+            </li>
+            <li className="flex items-start gap-2">
+              <span className="text-primary-600 mt-1">•</span>
+              <span>Deposit keamanan Rp 200.000 (dikembalikan setelah pengembalian)</span>
+            </li>
+            <li className="flex items-start gap-2">
+              <span className="text-primary-600 mt-1">•</span>
+              <span>Pembayaran dapat dilakukan via transfer bank atau cash</span>
+            </li>
+            <li className="flex items-start gap-2">
+              <span className="text-primary-600 mt-1">•</span>
+              <span>Produk harus dikembalikan dalam kondisi bersih dan tidak rusak</span>
+            </li>
+            <li className="flex items-start gap-2">
+              <span className="text-primary-600 mt-1">•</span>
+              <span>Denda keterlambatan Rp 50.000 per hari</span>
+            </li>
+          </ul>
+        </div>
+
         {/* Action Button */}
         {product.status === 'AVAILABLE' && (
-          <div className="mt-8 text-center">
-            <button className="px-8 py-3 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition shadow-lg">
+          <div className="text-center">
+            <button className="px-8 py-3 bg-primary-600 text-white rounded-lg font-semibold hover:bg-primary-700 transition shadow-sm hover:shadow-md">
               Hubungi untuk Menyewa
             </button>
+            <p className="text-sm text-neutral-500 mt-3">
+              Atau hubungi WhatsApp: <span className="font-medium text-primary-600">+62 812-3456-7890</span>
+            </p>
           </div>
         )}
       </div>
