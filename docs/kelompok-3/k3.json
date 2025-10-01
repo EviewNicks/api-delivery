@@ -1,0 +1,65 @@
+{
+    "status": "success",
+    "data": [
+        {
+            "product_id": "65",
+            "product_title": "Laptop ADVAN AI Gen ULTRA Prosesor Intel Core Ultra 5 125H 16GB 512GB WINDOWS 11",
+            "product_price": "95992000",
+            "product_img1": "AD 1.webp"
+        },
+        {
+            "product_id": "64",
+            "product_title": "Laptop Lenovo Ideapad Slim 5 14 Oled I7 13620H 16GB 1TB SSD W11 OHS21 14.0WUXGA BLIT 9PID | 9MID.",
+            "product_price": "11967000",
+            "product_img1": "LIP1.webp"
+        },
+        {
+            "product_id": "60",
+            "product_title": "Apple iMac (24 inci, M3, 2023) 8C CPU, 8C GPU, 8GB RAM, 256GB, 2 Port",
+            "product_price": "20499000",
+            "product_img1": "APL 1.webp"
+        },
+        {
+            "product_id": "63",
+            "product_title": "Asus Vivobook 14 A1404VA Intel Core i5 gen 13 1335U 8gb 512gb W11+OHS 14.0 Full HD IPS",
+            "product_price": "9399000",
+            "product_img1": "AV 1.webp"
+        },
+        {
+            "product_id": "46",
+            "product_title": "MALLIT EPSON Printer Epson L3210 L-3210 L 3210 3 IN 1 Pengganti Epson L3110 Print Scan Copy A4 All in One Garansi Resmi",
+            "product_price": "2149000",
+            "product_img1": "epson l3210.webp"
+        },
+        {
+            "product_id": "69",
+            "product_title": "ADVAN Tab VX Neo (4GB+4GB/128GB) 10.1\" IPS Screen Tablet Android 14 6200 mAh Dual Sim Card Garansi 1 Tahun",
+            "product_price": "1419000",
+            "product_img1": "ATVN 1.webp"
+        },
+        {
+            "product_id": "54",
+            "product_title": "GROTIC Powerbank 24000 mAh 6 Output 2 Input 5V 2.1A With Power Display LED Light GY60",
+            "product_price": "174000",
+            "product_img1": "PB 1.webp"
+        },
+        {
+            "product_id": "58",
+            "product_title": "Samsung Galaxy A55 5G 8/256GB",
+            "product_price": "5349000",
+            "product_img1": "AIB 1.webp"
+        },
+        {
+            "product_id": "43",
+            "product_title": "Xiaomi Mini LED Gaming Monitor G Pro 27i | Mini LED 1152-Zona | HDR1000 | Refresh Rate 180 Hz",
+            "product_price": "1829000",
+            "product_img1": "xiamoi g pro 27.webp"
+        },
+        {
+            "product_id": "73",
+            "product_title": "tambahh",
+            "product_price": "2000000",
+            "product_img1": "IMG-20250716-WA0010.jpg"
+        }
+    ]
+}

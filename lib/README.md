@@ -308,3 +308,117 @@ curl "https://rental-baju.netlify.app/api/public/products/67d31de1-f7a6-4e78-af3
 - **Error Recovery**: Semua errors di-wrap dalam ApiError untuk consistency
 - **Type Safety**: Full TypeScript support dengan strict typing
 - **Abort Controller**: Digunakan untuk proper timeout handling dan cleanup
+
+---
+
+## Kelompok 3: GadgetHouse API
+
+### `fetchGadgetRecommendations()`
+
+Mengambil rekomendasi produk gadget dari API Kelompok 3 dengan data enrichment.
+
+**Parameters**: None
+
+**Returns**: `Promise<GadgetProductEnriched[]>`
+
+**Features**:
+- Data enrichment otomatis (price formatting, category extraction)
+- Image URL resolution dengan placeholder fallback
+- Error handling dengan informative messages
+- 10-second timeout protection
+
+**Response Structure**:
+```typescript
+interface GadgetProductEnriched {
+  product_id: string;          // Product ID (string dari API)
+  product_title: string;       // Nama lengkap produk
+  product_price: string;       // Harga original (string)
+  product_img1: string;        // Image path original
+  // Enriched fields:
+  price_number: number;        // Parsed price (e.g., 95992000)
+  price_formatted: string;     // Formatted currency (e.g., "Rp 95.992.000")
+  image_url: string;           // Resolved image URL or placeholder
+  category_guess?: string;     // Extracted category (e.g., "Laptop", "Tablet")
+}
+```
+
+**Example**:
+```typescript
+import { fetchGadgetRecommendations } from '@/lib/api-client';
+import type { GadgetProductEnriched } from '@/lib/types';
+
+// Component usage
+const [products, setProducts] = useState<GadgetProductEnriched[]>([]);
+
+useEffect(() => {
+  async function loadProducts() {
+    try {
+      const data = await fetchGadgetRecommendations();
+      setProducts(data);
+    } catch (error) {
+      console.error('Failed to load gadget recommendations:', error);
+    }
+  }
+  loadProducts();
+}, []);
+
+// Display example
+{products.map(product => (
+  <div key={product.product_id}>
+    <h3>{product.product_title}</h3>
+    <p>{product.price_formatted}</p>
+    <img src={product.image_url} alt={product.product_title} />
+    {product.category_guess && <span>{product.category_guess}</span>}
+  </div>
+))}
+```
+
+**Error Handling**:
+```typescript
+try {
+  const products = await fetchGadgetRecommendations();
+} catch (error) {
+  if (error instanceof ApiError) {
+    console.log('API Error:', error.message);
+    // Handle specific errors
+  }
+}
+```
+
+**Data Enrichment Details**:
+
+1. **Price Formatting**:
+   - Original: `"95992000"` (string)
+   - Parsed: `95992000` (number)
+   - Formatted: `"Rp 95.992.000"` (Indonesian currency format)
+
+2. **Category Extraction**:
+   Extracted dari product title dengan keywords:
+   - "laptop" → "Laptop"
+   - "tablet" → "Tablet"
+   - "printer" → "Printer"
+   - "monitor" → "Monitor"
+   - "powerbank" → "Powerbank"
+   - "samsung", "iphone", "galaxy" → "Smartphone"
+   - Default: "Gadget"
+
+3. **Image Resolution**:
+   - Checks if image path is absolute URL (`http://...`)
+   - If not, fallback ke placeholder: `/images/kelompok-3/placeholder-gadget.jpg`
+   - Additional `onError` handler available di component level
+
+**Performance**:
+- Timeout: 10 seconds (AbortController)
+- Response validation sebelum parsing
+- Client-side enrichment (no extra API calls)
+
+**Known Limitations**:
+- API returns only 4 fields (vs 14 documented in database schema)
+- Image paths are relative (not accessible, use placeholders)
+- Data types: API returns strings, not integers as documented
+
+**Related Files**:
+- Types: `lib/types.ts` (lines 43-62)
+- API Route: `app/api/kelompok-3/recomendations/route.ts`
+- Dashboard: `app/k3/page.tsx`
+- Documentation: `docs/kelompok-3/kelompok3.md`

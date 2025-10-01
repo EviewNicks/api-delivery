@@ -39,3 +39,24 @@ export interface ApiErrorResponse {
     code: string;
   };
 }
+
+// Kelompok 3: GadgetHouse API Types
+
+export interface GadgetProductSimplified {
+  product_id: string;
+  product_title: string;
+  product_price: string;
+  product_img1: string;
+}
+
+export interface GadgetRecommendationsResponse {
+  status: string;
+  data: GadgetProductSimplified[];
+}
+
+export interface GadgetProductEnriched extends GadgetProductSimplified {
+  price_number: number;
+  price_formatted: string;
+  image_url: string;
+  category_guess?: string;
+}
