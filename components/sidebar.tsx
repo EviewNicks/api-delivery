@@ -19,7 +19,7 @@ const navItems: NavItem[] = [
   { title: 'Kelompok 1 - Rental Baju', href: '/k1', status: 'implemented' },
   { title: 'Kelompok 2', href: '/k2', status: 'pending' },
   { title: 'Kelompok 3 - GadgetHouse', href: '/k3', status: 'implemented' },
-  { title: 'Kelompok 4', href: '/k4', status: 'pending' },
+  { title: 'Kelompok 4 - Krusit F&B', href: '/k4', status: 'implemented' },
   { title: 'Kelompok 5', href: '/k5', status: 'pending' },
   { title: 'Kelompok 6', href: '/k6', status: 'pending' },
   { title: 'Kelompok 7', href: '/k7', status: 'pending' },

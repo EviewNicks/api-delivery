@@ -1,0 +1,264 @@
+{
+	"info": {
+		"_postman_id": "5518e3b1-a235-4133-9b78-ac7d04493f6b",
+		"name": "Projek Kelompok 4",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "48550795",
+		"_collection_link": "https://almutawakkilpaletari-768856.postman.co/workspace/Personal-Workspace~5ea4fde4-37f5-4c1b-bb73-0fceb7613b4b/collection/48550795-5518e3b1-a235-4133-9b78-ac7d04493f6b?action=share&source=collection_link&creator=48550795"
+	},
+	"item": [
+		{
+			"name": "Krusit: Login",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"email\": \"almutawakkilpaletari@gmail.com\",\r\n  \"password\": \"cobacoba\"\r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://projekkelompok4-production.up.railway.app/api/login",
+					"protocol": "https",
+					"host": [
+						"projekkelompok4-production",
+						"up",
+						"railway",
+						"app"
+					],
+					"path": [
+						"api",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Krusit: Get Minuman",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "https://projekkelompok4-production.up.railway.app/api/minuman",
+					"protocol": "https",
+					"host": [
+						"projekkelompok4-production",
+						"up",
+						"railway",
+						"app"
+					],
+					"path": [
+						"api",
+						"minuman"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Krusit: Get Makanan",
+			"request": {
+				"method": "GET",
+				"header": []
+			},
+			"response": []
+		},
+		{
+			"name": "Krusit: Post Makanan",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"name\": \"Gado-Gado\",\r\n    \"description\": \"Gado-Gado enak\",\r\n    \"price\": 10000,\r\n    \"category\": \"makanan\",\r\n    \"image\": \"Gadogado.jpg\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://projekkelompok4-production.up.railway.app/api/makanan/",
+					"protocol": "https",
+					"host": [
+						"projekkelompok4-production",
+						"up",
+						"railway",
+						"app"
+					],
+					"path": [
+						"api",
+						"makanan",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Krusit: Post Minuman",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"name\": \"Es Kopi\",\r\n    \"category\": \"minuman\",\r\n    \"description\": \"Es Kopi gula aren yang menyegarkan\",\r\n    \"price\": 20000,\r\n    \"image\": \"kopi.jpg\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://projekkelompok4-production.up.railway.app/api/minuman/",
+					"protocol": "https",
+					"host": [
+						"projekkelompok4-production",
+						"up",
+						"railway",
+						"app"
+					],
+					"path": [
+						"api",
+						"minuman",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Krusit: Put Makanan",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n        \"name\": \"Nasi Goreng\",\r\n        \"description\": \"Nasi Goreng enak\",\r\n        \"category\": \"makanan\",\r\n        \"price\": \"10000.00\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://projekkelompok4-production.up.railway.app/api/makanan/13",
+					"protocol": "https",
+					"host": [
+						"projekkelompok4-production",
+						"up",
+						"railway",
+						"app"
+					],
+					"path": [
+						"api",
+						"makanan",
+						"13"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Krusit: Put Minuman",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n        \"name\": \"Es Kopi Gula Aren\",\r\n        \"description\": \"Es Kopi gula aren yang menyegarkan\",\r\n        \"category\": \"minuman\",\r\n        \"price\": \"20000.00\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://projekkelompok4-production.up.railway.app/api/minuman/14",
+					"protocol": "https",
+					"host": [
+						"projekkelompok4-production",
+						"up",
+						"railway",
+						"app"
+					],
+					"path": [
+						"api",
+						"minuman",
+						"14"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Krusit: Delete Makanan",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "https://projekkelompok4-production.up.railway.app/api/makanan/13",
+					"protocol": "https",
+					"host": [
+						"projekkelompok4-production",
+						"up",
+						"railway",
+						"app"
+					],
+					"path": [
+						"api",
+						"makanan",
+						"13"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Krusit: Delete Minuman",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "https://projekkelompok4-production.up.railway.app/api/minuman/14",
+					"protocol": "https",
+					"host": [
+						"projekkelompok4-production",
+						"up",
+						"railway",
+						"app"
+					],
+					"path": [
+						"api",
+						"minuman",
+						"14"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

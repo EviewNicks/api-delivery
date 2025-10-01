@@ -1,4 +1,12 @@
-import type { Product, ProductListResponse, GadgetRecommendationsResponse, GadgetProductEnriched } from './types';
+import type {
+  Product,
+  ProductListResponse,
+  GadgetRecommendationsResponse,
+  GadgetProductEnriched,
+  KrusitMenuListResponse,
+  KrusitMenuItem,
+  KrusitMenuItemEnriched
+} from './types';
 
 const BASE_URL = '/api/kelompok-1';
 const TIMEOUT = 10000;
@@ -132,5 +140,115 @@ export async function fetchGadgetRecommendations(): Promise<GadgetProductEnriche
   } catch (error) {
     if (error instanceof ApiError) throw error;
     throw new ApiError('Gagal mengambil rekomendasi produk');
+  }
+}
+
+// Kelompok 4: Krusit API
+
+function isValidImagePath(imagePath: string | null): boolean {
+  if (!imagePath) {
+    return false;
+  }
+
+  if (imagePath.startsWith('http://') || imagePath.startsWith('https://')) {
+    return true;
+  }
+
+  if (imagePath.includes('C:\\') || imagePath.includes('tmp')) {
+    return false;
+  }
+
+  if (imagePath.startsWith('menus/') || imagePath.startsWith('images/')) {
+    return true;
+  }
+
+  return false;
+}
+
+function resolveKrusitImageUrl(imagePath: string | null): string {
+  if (!imagePath) {
+    return '/images/kelompok-4/placeholder-makanan.png';
+  }
+
+  if (imagePath.startsWith('http://') || imagePath.startsWith('https://')) {
+    return imagePath;
+  }
+
+  if (!isValidImagePath(imagePath)) {
+    return '/images/kelompok-4/placeholder-makanan.png';
+  }
+
+  return `https://projekkelompok4-production.up.railway.app/storage/${imagePath}`;
+}
+
+function fixKrusitCategory(item: KrusitMenuItem): 'makanan' | 'minuman' {
+  const nameLower = item.name.toLowerCase();
+
+  if (nameLower.includes('tea') || nameLower.includes('kopi') || nameLower.includes('jus')) {
+    return 'minuman';
+  }
+
+  return item.category;
+}
+
+function enrichKrusitMenuItem(item: KrusitMenuItem): KrusitMenuItemEnriched {
+  const priceNumber = parseFloat(item.price);
+  const correctedCategory = fixKrusitCategory(item);
+
+  return {
+    ...item,
+    category: correctedCategory,
+    price_number: priceNumber,
+    price_formatted: formatRupiah(priceNumber),
+    image_url: resolveKrusitImageUrl(item.image),
+    is_valid_image: isValidImagePath(item.image),
+  };
+}
+
+export async function fetchKrusitMakanan(): Promise<KrusitMenuItemEnriched[]> {
+  try {
+    const response = await fetchWithTimeout('/api/kelompok-4/makanan');
+
+    if (!response.ok) {
+      throw new ApiError(`HTTP ${response.status}: ${response.statusText}`, response.status);
+    }
+
+    const result: KrusitMenuListResponse = await response.json();
+
+    if (result.status === 'error') {
+      throw new ApiError('API returned error status');
+    }
+
+    return result.data
+      .map(enrichKrusitMenuItem)
+      .filter(item => item.category === 'makanan');
+
+  } catch (error) {
+    if (error instanceof ApiError) throw error;
+    throw new ApiError('Gagal mengambil data makanan');
+  }
+}
+
+export async function fetchKrusitMinuman(): Promise<KrusitMenuItemEnriched[]> {
+  try {
+    const response = await fetchWithTimeout('/api/kelompok-4/minuman');
+
+    if (!response.ok) {
+      throw new ApiError(`HTTP ${response.status}: ${response.statusText}`, response.status);
+    }
+
+    const result: KrusitMenuListResponse = await response.json();
+
+    if (result.status === 'error') {
+      throw new ApiError('API returned error status');
+    }
+
+    return result.data
+      .map(enrichKrusitMenuItem)
+      .filter(item => item.category === 'minuman');
+
+  } catch (error) {
+    if (error instanceof ApiError) throw error;
+    throw new ApiError('Gagal mengambil data minuman');
   }
 }

@@ -60,3 +60,28 @@ export interface GadgetProductEnriched extends GadgetProductSimplified {
   image_url: string;
   category_guess?: string;
 }
+
+// Kelompok 4: Krusit API Types
+
+export interface KrusitMenuItem {
+  id: number;
+  name: string;
+  description: string | null;
+  category: 'makanan' | 'minuman';
+  price: string;
+  image: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface KrusitMenuListResponse {
+  status: string;
+  data: KrusitMenuItem[];
+}
+
+export interface KrusitMenuItemEnriched extends KrusitMenuItem {
+  price_number: number;
+  price_formatted: string;
+  image_url: string;
+  is_valid_image: boolean;
+}

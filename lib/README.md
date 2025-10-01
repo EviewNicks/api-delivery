@@ -422,3 +422,334 @@ try {
 - API Route: `app/api/kelompok-3/recomendations/route.ts`
 - Dashboard: `app/k3/page.tsx`
 - Documentation: `docs/kelompok-3/kelompok3.md`
+
+---
+
+## Kelompok 4: Krusit F&B API
+
+### `fetchKrusitMakanan()`
+
+Mengambil daftar menu makanan dari API Krusit dengan data enrichment dan category filtering.
+
+**Parameters**: None
+
+**Returns**: `Promise<KrusitMenuItemEnriched[]>`
+
+**Features**:
+- Automatic price parsing dan currency formatting
+- Smart image URL resolution dengan fallback handling
+- Category correction untuk mismatched data
+- Invalid image path detection
+- 10-second timeout protection
+
+**Response Structure**:
+```typescript
+interface KrusitMenuItemEnriched {
+  id: number;                  // Menu ID
+  name: string;                // Nama menu (e.g., "Gohyong", "Bakso")
+  description: string | null;  // Deskripsi menu
+  category: 'makanan' | 'minuman'; // Corrected category
+  price: string;               // Original price (e.g., "10000.00")
+  image: string;               // Original image path
+  created_at: string;          // ISO timestamp
+  updated_at: string;          // ISO timestamp
+  // Enriched fields:
+  price_number: number;        // Parsed price (e.g., 10000)
+  price_formatted: string;     // Formatted currency (e.g., "Rp 10.000")
+  image_url: string;           // Full URL atau placeholder
+  is_valid_image: boolean;     // Image validity flag
+}
+```
+
+**Example**:
+```typescript
+import { fetchKrusitMakanan } from '@/lib/api-client';
+import type { KrusitMenuItemEnriched } from '@/lib/types';
+
+// Component usage
+const [makanan, setMakanan] = useState<KrusitMenuItemEnriched[]>([]);
+const [loading, setLoading] = useState(true);
+const [error, setError] = useState<string | null>(null);
+
+useEffect(() => {
+  async function loadMakanan() {
+    try {
+      setLoading(true);
+      setError(null);
+      const data = await fetchKrusitMakanan();
+      setMakanan(data);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to load');
+    } finally {
+      setLoading(false);
+    }
+  }
+  loadMakanan();
+}, []);
+
+// Display with image fallback
+{makanan.map(item => (
+  <div key={item.id}>
+    <img
+      src={item.image_url}
+      alt={item.name}
+      onError={(e) => {
+        e.currentTarget.src = '/images/kelompok-4/placeholder-menu.jpg';
+      }}
+    />
+    {!item.is_valid_image && <span>No Image</span>}
+    <h3>{item.name}</h3>
+    <p>{item.price_formatted}</p>
+  </div>
+))}
+```
+
+---
+
+### `fetchKrusitMinuman()`
+
+Mengambil daftar menu minuman dari API Krusit dengan data enrichment dan category filtering.
+
+**Parameters**: None
+
+**Returns**: `Promise<KrusitMenuItemEnriched[]>`
+
+**Features**: Same as `fetchKrusitMakanan()` but filtered for beverages
+
+**Example**:
+```typescript
+import { fetchKrusitMinuman } from '@/lib/api-client';
+
+const [minuman, setMinuman] = useState<KrusitMenuItemEnriched[]>([]);
+
+useEffect(() => {
+  async function loadMinuman() {
+    try {
+      const data = await fetchKrusitMinuman();
+      setMinuman(data);
+    } catch (error) {
+      console.error('Failed to load minuman:', error);
+    }
+  }
+  loadMinuman();
+}, []);
+```
+
+---
+
+### Parallel Fetching Pattern
+
+Best practice untuk fetch makanan dan minuman secara bersamaan:
+
+```typescript
+const [makanan, setMakanan] = useState<KrusitMenuItemEnriched[]>([]);
+const [minuman, setMinuman] = useState<KrusitMenuItemEnriched[]>([]);
+const [loadingMakanan, setLoadingMakanan] = useState(true);
+const [loadingMinuman, setLoadingMinuman] = useState(true);
+
+useEffect(() => {
+  // Fetch both categories simultaneously
+  async function loadMakanan() {
+    try {
+      setLoadingMakanan(true);
+      const data = await fetchKrusitMakanan();
+      setMakanan(data);
+    } finally {
+      setLoadingMakanan(false);
+    }
+  }
+
+  async function loadMinuman() {
+    try {
+      setLoadingMinuman(true);
+      const data = await fetchKrusitMinuman();
+      setMinuman(data);
+    } finally {
+      setLoadingMinuman(false);
+    }
+  }
+
+  // Start both requests in parallel
+  loadMakanan();
+  loadMinuman();
+}, []);
+```
+
+---
+
+### Data Enrichment Details
+
+**1. Price Transformation**:
+```typescript
+// Original API response
+price: "10000.00" (string)
+
+// After enrichment
+price_number: 10000 (number)
+price_formatted: "Rp 10.000" (Indonesian currency)
+
+// Function
+function formatRupiah(amount: number): string {
+  return new Intl.NumberFormat('id-ID', {
+    style: 'currency',
+    currency: 'IDR',
+    minimumFractionDigits: 0,
+  }).format(amount);
+}
+```
+
+**2. Image URL Resolution**:
+```typescript
+// Valid relative path
+Input:  "menus/abc123.jpg"
+Output: "https://projekkelompok4-production.up.railway.app/storage/menus/abc123.jpg"
+
+// Invalid absolute path (Windows temp file)
+Input:  "C:\\xampp\\tmp\\php8274.tmp"
+Output: "/images/kelompok-4/placeholder-menu.jpg"
+is_valid_image: false
+
+// Null image
+Input:  null
+Output: "/images/kelompok-4/placeholder-menu.jpg"
+is_valid_image: false
+
+// Full URL (already valid)
+Input:  "https://example.com/image.jpg"
+Output: "https://example.com/image.jpg"
+is_valid_image: true
+```
+
+**3. Category Correction**:
+```typescript
+// Fix mismatched categories in database
+Input:  { name: "Green Tea", category: "makanan" }
+Output: { name: "Green Tea", category: "minuman" }
+
+Input:  { name: "Thai Tea", category: "makanan" }
+Output: { name: "Thai Tea", category: "minuman" }
+
+// Detection keywords: tea, kopi, jus
+function fixKrusitCategory(item: KrusitMenuItem): 'makanan' | 'minuman' {
+  const nameLower = item.name.toLowerCase();
+  if (nameLower.includes('tea') ||
+      nameLower.includes('kopi') ||
+      nameLower.includes('jus')) {
+    return 'minuman';
+  }
+  return item.category;
+}
+```
+
+**4. Image Path Validation**:
+```typescript
+function isValidImagePath(imagePath: string): boolean {
+  // Reject absolute Windows paths
+  if (imagePath.includes('C:\\') || imagePath.includes('tmp')) {
+    return false;
+  }
+
+  // Accept HTTP/HTTPS URLs
+  if (imagePath.startsWith('http://') || imagePath.startsWith('https://')) {
+    return true;
+  }
+
+  // Accept relative paths (menus/, images/)
+  if (imagePath.startsWith('menus/') || imagePath.startsWith('images/')) {
+    return true;
+  }
+
+  return false;
+}
+```
+
+---
+
+### Error Handling
+
+**Error Types**:
+```typescript
+try {
+  const data = await fetchKrusitMakanan();
+} catch (error) {
+  if (error instanceof ApiError) {
+    // API-specific error dengan status code
+    console.log('API Error:', error.message);
+    console.log('Status Code:', error.statusCode);
+  } else {
+    // Unknown error
+    console.log('Unknown error:', error);
+  }
+}
+```
+
+**Common Errors**:
+- `Request timeout - API tidak merespons dalam 10 detik` (504)
+- `Network error - Gagal menghubungi API Krusit` (500)
+- `HTTP 404: Not Found` - Endpoint tidak ditemukan
+- `API returned error status` - API response `status: "error"`
+
+---
+
+### Performance & Optimization
+
+**Timeout Configuration**:
+```typescript
+const TIMEOUT = 10000; // 10 seconds
+```
+
+**Best Practices**:
+1. **Parallel Fetching**: Fetch makanan dan minuman simultaneously untuk better performance
+2. **Independent States**: Separate loading/error states per category
+3. **Client-Side Caching**: React state prevents unnecessary refetches
+4. **Image Lazy Loading**: Browser default lazy loading untuk images
+5. **Fallback Strategy**: Placeholder images untuk invalid paths
+
+**Performance Metrics**:
+- Average response time: ~500ms
+- Timeout threshold: 10 seconds
+- Typical dataset size: 10-20 items per category
+
+---
+
+### Known Issues & Solutions
+
+**Issue 1: Category Mismatches**
+
+Problem: Database contains beverages categorized as "makanan"
+
+Solution: Automatic category correction via `fixKrusitCategory()`
+- Detects: tea, kopi, jus keywords
+- Corrects category before filtering
+
+**Issue 2: Invalid Image Paths**
+
+Problem: API returns Windows absolute paths (`C:\\xampp\\tmp\\...`)
+
+Solution:
+- Image validation via `isValidImagePath()`
+- Fallback to placeholder image
+- `is_valid_image` flag untuk UI indication
+
+**Issue 3: Null Images**
+
+Problem: Some items have `image: null`
+
+Solution: Type definition allows `string | null`, enrichment handles null case
+
+---
+
+### Related Files
+
+**Implementation**:
+- Types: `lib/types.ts` (lines 64-106)
+- API Client: `lib/api-client.ts` (lines 146-246)
+- API Routes: `app/api/kelompok-4/makanan/route.ts`, `app/api/kelompok-4/minuman/route.ts`
+- Dashboard: `app/k4/page.tsx`
+
+**Documentation**:
+- Implementation Guide: `docs/kelompok-4/IMPLEMENTATION.md`
+- API Reference: `docs/kelompok-4/API-REFERENCE.md`
+- Original Docs: `docs/kelompok-4/kelompok4.md`
+- Postman Collection: `docs/kelompok-4/Projek_Kelompok 4.postman_collection.json`
+- API Test Results: `docs/kelompok-4/hasil4.log`

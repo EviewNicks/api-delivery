@@ -1,0 +1,128 @@
+GET Krusirt: get Minuman 200 ok 
+
+{
+    "status": "success",
+    "data": [
+        {
+            "id": 6,
+            "name": "Thai Tea",
+            "description": null,
+            "category": "minuman",
+            "price": "10000.00",
+            "image": "menus/kp2NjO0m5h5by2UmVQX5CnY97WxsGgRmSrSrePGM.jpg",
+            "created_at": "2025-09-16T08:42:15.000000Z",
+            "updated_at": "2025-09-16T19:04:36.000000Z"
+        }
+    ]
+}
+
+
+GET KrusitL Get Makanan 200 ok
+
+{
+    "status": "success",
+    "data": [
+        {
+            "id": 1,
+            "name": "Gohyong",
+            "description": null,
+            "category": "makanan",
+            "price": "10000.00",
+            "image": "menus/1Yjl62Uy3tHl3SjGurvgjlWTM6bno1rxTKlHXagL.png",
+            "created_at": "2025-09-16T04:30:07.000000Z",
+            "updated_at": "2025-09-16T19:01:14.000000Z"
+        },
+        {
+            "id": 3,
+            "name": "Bakso",
+            "description": null,
+            "category": "makanan",
+            "price": "10000.00",
+            "image": "menus/RtT0nrcHcp02avfDMu85o6HoIc26PJ0CEQ9Ix6AT.jpg",
+            "created_at": "2025-09-16T04:58:11.000000Z",
+            "updated_at": "2025-09-16T19:02:38.000000Z"
+        },
+        {
+            "id": 4,
+            "name": "Tahu Walik",
+            "description": null,
+            "category": "makanan",
+            "price": "10000.00",
+            "image": "menus/DxhftqGEgVjO4cN3ypWZntSvnApMKSd6ulyVOZrm.jpg",
+            "created_at": "2025-09-16T08:39:12.000000Z",
+            "updated_at": "2025-09-16T19:03:29.000000Z"
+        },
+        {
+            "id": 5,
+            "name": "Pangsit Goreng",
+            "description": null,
+            "category": "makanan",
+            "price": "10000.00",
+            "image": "menus/ek4nJkW7Xd8GyINb1QpUttpss702QUVHyc4CwYEv.png",
+            "created_at": "2025-09-16T08:41:25.000000Z",
+            "updated_at": "2025-09-16T19:03:56.000000Z"
+        },
+        {
+            "id": 7,
+            "name": "Green Tea",
+            "description": null,
+            "category": "makanan",
+            "price": "10000.00",
+            "image": "menus/KjYMNXIZ4y4fuNW7pBYJlSeayBodfCua9I7huRoj.jpg",
+            "created_at": "2025-09-16T08:43:01.000000Z",
+            "updated_at": "2025-09-23T16:19:41.000000Z"
+        },
+        {
+            "id": 16,
+            "name": "cireng",
+            "description": "cireng isi daging",
+            "category": "makanan",
+            "price": "10000.00",
+            "image": "C:\\xampp\\tmp\\php5A96.tmp",
+            "created_at": "2025-09-29T06:01:56.000000Z",
+            "updated_at": "2025-09-29T06:01:56.000000Z"
+        },
+        {
+            "id": 17,
+            "name": "cireng",
+            "description": "cireng isi daging",
+            "category": "makanan",
+            "price": "10000.00",
+            "image": "C:\\xampp\\tmp\\php8274.tmp",
+            "created_at": "2025-09-29T06:05:23.000000Z",
+            "updated_at": "2025-09-29T06:05:23.000000Z"
+        },
+        {
+            "id": 18,
+            "name": "tempe goreng",
+            "description": "tempe goreng renyah",
+            "category": "makanan",
+            "price": "10000.00",
+            "image": "images/vhR43fMH372FKdwxEMZWhzIBS7aseOlrZDIkvrBN.png",
+            "created_at": "2025-09-30T00:18:09.000000Z",
+            "updated_at": "2025-09-30T00:18:09.000000Z"
+        },
+        {
+            "id": 19,
+            "name": "tahu goreng",
+            "description": "tahu goreng renyah",
+            "category": "makanan",
+            "price": "10000.00",
+            "image": "menus/1xJJCO7I6DwS3QVdltnLDgJc1NmbhwZRZNqpbZEv.png",
+            "created_at": "2025-09-30T00:20:07.000000Z",
+            "updated_at": "2025-09-30T00:20:07.000000Z"
+        },
+        {
+            "id": 20,
+            "name": "tahu goreng",
+            "description": "tahu goreng renyah",
+            "category": "makanan",
+            "price": "10000.00",
+            "image": null,
+            "created_at": "2025-09-30T00:45:02.000000Z",
+            "updated_at": "2025-09-30T00:45:02.000000Z"
+        }
+    ]
+}
+
+
