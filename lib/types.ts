@@ -144,3 +144,25 @@ export interface TripnesiaBookingEnriched extends TripnesiaBooking {
   is_upcoming: boolean;
   type_label: string;
 }
+
+// Kelompok 6: House Cafe API Types
+
+export interface HouseCafeReservation {
+  id: number;
+  nama: string;
+  email: string;
+  telepon: string;
+  tanggal: string;
+  jam: string;
+  jumlah_orang: number;
+  catatan: string | null;
+  created_at: string;
+}
+
+export interface HouseCafeReservationEnriched extends HouseCafeReservation {
+  datetime_formatted: string;
+  date_formatted: string;
+  time_formatted: string;
+  is_upcoming: boolean;
+  status: 'upcoming' | 'past';
+}

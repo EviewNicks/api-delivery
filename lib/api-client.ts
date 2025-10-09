@@ -14,7 +14,9 @@ import type {
   TripnesiaBookingCreateResponse,
   TripnesiaBookingUpdateResponse,
   TripnesiaBookingDeleteResponse,
-  TripnesiaBookingEnriched
+  TripnesiaBookingEnriched,
+  HouseCafeReservation,
+  HouseCafeReservationEnriched
 } from './types';
 
 const BASE_URL = '/api/kelompok-1';
@@ -468,5 +470,163 @@ export async function deleteBooking(id: number): Promise<{ success: boolean; mes
   } catch (error) {
     if (error instanceof ApiError) throw error;
     throw new ApiError('Terjadi kesalahan saat menghapus booking');
+  }
+}
+
+// Kelompok 6: House Cafe API
+
+function formatReservationDateTime(tanggal: string, jam: string): {
+  datetime_formatted: string;
+  date_formatted: string;
+  time_formatted: string;
+} {
+  const dateTimeStr = `${tanggal}T${jam}`;
+  const dateTime = new Date(dateTimeStr);
+
+  const date_formatted = new Intl.DateTimeFormat('id-ID', {
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric'
+  }).format(dateTime);
+
+  const time_formatted = new Intl.DateTimeFormat('id-ID', {
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: false
+  }).format(dateTime);
+
+  const datetime_formatted = `${date_formatted} pukul ${time_formatted}`;
+
+  return { datetime_formatted, date_formatted, time_formatted };
+}
+
+function isReservationUpcoming(tanggal: string, jam: string): boolean {
+  const dateTimeStr = `${tanggal}T${jam}`;
+  const reservationDateTime = new Date(dateTimeStr);
+  const now = new Date();
+  return reservationDateTime >= now;
+}
+
+function enrichReservation(reservation: HouseCafeReservation): HouseCafeReservationEnriched {
+  const { datetime_formatted, date_formatted, time_formatted } = formatReservationDateTime(
+    reservation.tanggal,
+    reservation.jam
+  );
+  const is_upcoming = isReservationUpcoming(reservation.tanggal, reservation.jam);
+
+  return {
+    ...reservation,
+    datetime_formatted,
+    date_formatted,
+    time_formatted,
+    is_upcoming,
+    status: is_upcoming ? 'upcoming' : 'past'
+  };
+}
+
+export async function fetchReservations(): Promise<HouseCafeReservationEnriched[]> {
+  try {
+    const response = await fetchWithTimeout('/api/kelompok-6/reservasi');
+
+    if (!response.ok) {
+      throw new ApiError(`HTTP ${response.status}: ${response.statusText}`, response.status);
+    }
+
+    const data: HouseCafeReservation[] = await response.json();
+    return data.map(enrichReservation);
+
+  } catch (error) {
+    if (error instanceof ApiError) throw error;
+    throw new ApiError('Gagal mengambil data reservasi');
+  }
+}
+
+export async function fetchReservationDetail(id: number): Promise<HouseCafeReservationEnriched> {
+  try {
+    const response = await fetchWithTimeout(`/api/kelompok-6/reservasi?id=${id}`);
+
+    if (!response.ok) {
+      if (response.status === 404) {
+        throw new ApiError('Reservasi tidak ditemukan', 404);
+      }
+      throw new ApiError('Gagal mengambil detail reservasi', response.status);
+    }
+
+    const data: HouseCafeReservation[] = await response.json();
+
+    if (!data || data.length === 0) {
+      throw new ApiError('Reservasi tidak ditemukan', 404);
+    }
+
+    return enrichReservation(data[0]);
+
+  } catch (error) {
+    if (error instanceof ApiError) throw error;
+    throw new ApiError('Terjadi kesalahan saat mengambil detail reservasi');
+  }
+}
+
+export async function createReservation(data: Omit<HouseCafeReservation, 'id' | 'created_at'>): Promise<HouseCafeReservation> {
+  try {
+    const response = await fetch('/api/kelompok-6/reservasi', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data),
+    });
+
+    if (!response.ok) {
+      throw new ApiError('Gagal membuat reservasi', response.status);
+    }
+
+    const result: HouseCafeReservation[] = await response.json();
+    return result[0];
+
+  } catch (error) {
+    if (error instanceof ApiError) throw error;
+    throw new ApiError('Terjadi kesalahan saat membuat reservasi');
+  }
+}
+
+export async function updateReservation(id: number, data: Partial<Omit<HouseCafeReservation, 'id' | 'created_at'>>): Promise<HouseCafeReservation> {
+  try {
+    const response = await fetch(`/api/kelompok-6/reservasi?id=${id}`, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data),
+    });
+
+    if (!response.ok) {
+      throw new ApiError('Gagal mengupdate reservasi', response.status);
+    }
+
+    const result: HouseCafeReservation[] = await response.json();
+    return result[0];
+
+  } catch (error) {
+    if (error instanceof ApiError) throw error;
+    throw new ApiError('Terjadi kesalahan saat mengupdate reservasi');
+  }
+}
+
+export async function deleteReservation(id: number): Promise<{ success: boolean; message: string }> {
+  try {
+    const response = await fetch(`/api/kelompok-6/reservasi?id=${id}`, {
+      method: 'DELETE',
+    });
+
+    if (!response.ok) {
+      throw new ApiError('Gagal menghapus reservasi', response.status);
+    }
+
+    const result = await response.json();
+    return result;
+
+  } catch (error) {
+    if (error instanceof ApiError) throw error;
+    throw new ApiError('Terjadi kesalahan saat menghapus reservasi');
   }
 }

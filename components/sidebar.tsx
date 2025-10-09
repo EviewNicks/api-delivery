@@ -21,7 +21,7 @@ const navItems: NavItem[] = [
   { title: 'Kelompok 3 - GadgetHouse', href: '/k3', status: 'implemented' },
   { title: 'Kelompok 4 - Krusit F&B', href: '/k4', status: 'implemented' },
   { title: 'Kelompok 5', href: '/k5', status: 'pending' },
-  { title: 'Kelompok 6', href: '/k6', status: 'pending' },
+  { title: 'Kelompok 6 - House Cafe', href: '/k6', status: 'implemented' },
   { title: 'Kelompok 7', href: '/k7', status: 'pending' },
   { title: 'Kelompok 8', href: '/k8', status: 'pending' },
   { title: 'Kelompok 9', href: '/k9', status: 'pending' },

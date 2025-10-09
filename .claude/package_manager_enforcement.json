@@ -136,5 +136,11 @@
     "blocked_command": "cd \"D:\\2-Project\\api-delivery\" && npm run build",
     "suggested_command": "cd \"D:\\2-Project\\api-delivery\" && yarn build",
     "reason": "Gunakan 'yarn' sebagai pengganti 'npm run' untuk workflow utama."
+  },
+  {
+    "session_id": "452aac73-f0a3-4446-9be6-ad6200cc11f5",
+    "blocked_command": "npm run dev",
+    "suggested_command": "yarn dev",
+    "reason": "Gunakan 'yarn' sebagai pengganti 'npm run' untuk workflow utama."
   }
 ]
