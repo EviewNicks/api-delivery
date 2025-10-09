@@ -1,0 +1,42 @@
+{
+	"info": {
+		"_postman_id": "06a53e37-ca0e-423c-bfb1-e51757d72f08",
+		"name": "Kelompok 2 (Bookings Pesawat)",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "48349658"
+	},
+	"item": [
+		{
+			"name": "List bookings",
+			"request": {
+				"method": "GET",
+				"header": []
+			},
+			"response": []
+		},
+		{
+			"name": "Create Data bookings",
+			"request": {
+				"method": "GET",
+				"header": []
+			},
+			"response": []
+		},
+		{
+			"name": "Update bookings",
+			"request": {
+				"method": "GET",
+				"header": []
+			},
+			"response": []
+		},
+		{
+			"name": "delete",
+			"request": {
+				"method": "GET",
+				"header": []
+			},
+			"response": []
+		}
+	]
+}

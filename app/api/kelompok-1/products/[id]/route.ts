@@ -1,63 +1,58 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest, NextResponse } from 'next/server';
 
-const EXTERNAL_API = "https://rental-baju.netlify.app/api/public/products";
-const TIMEOUT = 20000;
+const BASE_URL = 'https://sprightly-starburst-ae6a2a.netlify.app/api/public/products';
 
-async function fetchWithTimeout(
-  url: string,
-  timeout = TIMEOUT
-): Promise<Response> {
-  const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), timeout);
-
+export async function PUT(
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
   try {
-    const response = await fetch(url, {
-      signal: controller.signal,
-      headers: {
-        "Content-Type": "application/json",
-      },
+    const { id } = await params;
+    const formData = await request.formData();
+
+    const response = await fetch(`${BASE_URL}/${id}`, {
+      method: 'PUT',
+      body: formData,
     });
-    clearTimeout(timeoutId);
-    return response;
-  } catch (error) {
-    clearTimeout(timeoutId);
-    if (error instanceof Error && error.name === "AbortError") {
-      throw new Error("Request timeout");
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({ error: 'Failed to update product' }));
+      return NextResponse.json(errorData, { status: response.status });
     }
-    throw error;
+
+    const data = await response.json();
+    return NextResponse.json(data);
+  } catch (error) {
+    console.error('Update Product Error:', error);
+    return NextResponse.json(
+      { error: error instanceof Error ? error.message : 'Internal server error' },
+      { status: 500 }
+    );
   }
 }
 
-export async function GET(
+export async function DELETE(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const { id } = await params;
 
-    const response = await fetchWithTimeout(`${EXTERNAL_API}/${id}`);
+    const response = await fetch(`${BASE_URL}/${id}`, {
+      method: 'DELETE',
+    });
 
     if (!response.ok) {
-      if (response.status === 404) {
-        return NextResponse.json(
-          { error: "Product not found" },
-          { status: 404 }
-        );
-      }
-      return NextResponse.json(
-        { error: "Failed to fetch product detail" },
-        { status: response.status }
-      );
+      const errorData = await response.json().catch(() => ({ error: 'Failed to delete product' }));
+      return NextResponse.json(errorData, { status: response.status });
     }
 
     const data = await response.json();
     return NextResponse.json(data);
   } catch (error) {
-    console.error("API Proxy Error:", error);
+    console.error('Delete Product Error:', error);
     return NextResponse.json(
-      {
-        error: error instanceof Error ? error.message : "Internal server error",
-      },
+      { error: error instanceof Error ? error.message : 'Internal server error' },
       { status: 500 }
     );
   }

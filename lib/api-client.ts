@@ -1,6 +1,9 @@
 import type {
   Product,
   ProductListResponse,
+  ProductFormData,
+  Category,
+  CategoryListResponse,
   GadgetRecommendationsResponse,
   GadgetProductEnriched,
   KrusitMenuListResponse,
@@ -81,6 +84,97 @@ export async function getProductDetail(id: string): Promise<Product> {
   } catch (error) {
     if (error instanceof ApiError) throw error;
     throw new ApiError('Terjadi kesalahan saat mengambil detail');
+  }
+}
+
+export async function getCategories(): Promise<Category[]> {
+  try {
+    const response = await fetchWithTimeout(`${BASE_URL}/categories`);
+
+    if (!response.ok) {
+      throw new ApiError('Gagal mengambil kategori', response.status);
+    }
+
+    const data: CategoryListResponse = await response.json();
+    return data.categories;
+  } catch (error) {
+    if (error instanceof ApiError) throw error;
+    throw new ApiError('Terjadi kesalahan saat mengambil kategori');
+  }
+}
+
+export async function createProduct(formData: ProductFormData): Promise<Product> {
+  try {
+    const data = new FormData();
+
+    data.append('code', formData.code);
+    data.append('name', formData.name);
+    if (formData.description) data.append('description', formData.description);
+    data.append('modalAwal', formData.modalAwal);
+    data.append('currentPrice', formData.currentPrice);
+    data.append('quantity', formData.quantity);
+    data.append('categoryId', formData.categoryId);
+    data.append('sizes', formData.sizes);
+    if (formData.image) data.append('image', formData.image);
+
+    const response = await fetch(`${BASE_URL}/products`, {
+      method: 'POST',
+      body: data,
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      throw new ApiError(errorData.error || 'Gagal membuat produk', response.status);
+    }
+
+    return await response.json();
+  } catch (error) {
+    if (error instanceof ApiError) throw error;
+    throw new ApiError('Terjadi kesalahan saat membuat produk');
+  }
+}
+
+export async function updateProduct(id: string, formData: ProductFormData): Promise<Product> {
+  try {
+    const data = new FormData();
+
+    data.append('name', formData.name);
+    if (formData.description) data.append('description', formData.description);
+    data.append('currentPrice', formData.currentPrice);
+    if (formData.image) data.append('image', formData.image);
+
+    const response = await fetch(`${BASE_URL}/products/${id}`, {
+      method: 'PUT',
+      body: data,
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      throw new ApiError(errorData.error || 'Gagal mengupdate produk', response.status);
+    }
+
+    return await response.json();
+  } catch (error) {
+    if (error instanceof ApiError) throw error;
+    throw new ApiError('Terjadi kesalahan saat mengupdate produk');
+  }
+}
+
+export async function deleteProduct(id: string): Promise<{ success: boolean; message: string }> {
+  try {
+    const response = await fetch(`${BASE_URL}/products/${id}`, {
+      method: 'DELETE',
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      throw new ApiError(errorData.error || 'Gagal menghapus produk', response.status);
+    }
+
+    return await response.json();
+  } catch (error) {
+    if (error instanceof ApiError) throw error;
+    throw new ApiError('Terjadi kesalahan saat menghapus produk');
   }
 }
 

@@ -40,6 +40,30 @@ export interface ApiErrorResponse {
   };
 }
 
+export interface Category {
+  id: string;
+  name: string;
+  color: string;
+  products?: number;
+  createdAt: string;
+}
+
+export interface CategoryListResponse {
+  categories: Category[];
+}
+
+export interface ProductFormData {
+  code: string;
+  name: string;
+  description?: string;
+  modalAwal: string;
+  currentPrice: string;
+  quantity: string;
+  categoryId: string;
+  sizes: string;
+  image?: File;
+}
+
 // Kelompok 3: GadgetHouse API Types
 
 export interface GadgetProductSimplified {
