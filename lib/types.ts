@@ -109,3 +109,38 @@ export interface KrusitMenuItemEnriched extends KrusitMenuItem {
   image_url: string;
   is_valid_image: boolean;
 }
+
+// Kelompok 2: Tripnesia API Types
+
+export interface TripnesiaBooking {
+  id: number;
+  name: string;
+  type: string;
+  destination: string;
+  date: string;
+}
+
+export interface TripnesiaBookingListResponse {
+  data: TripnesiaBooking[];
+}
+
+export interface TripnesiaBookingCreateResponse {
+  message: string;
+  data: TripnesiaBooking;
+}
+
+export interface TripnesiaBookingUpdateResponse {
+  message: string;
+  data: TripnesiaBooking;
+}
+
+export interface TripnesiaBookingDeleteResponse {
+  message: string;
+  data: TripnesiaBooking[];
+}
+
+export interface TripnesiaBookingEnriched extends TripnesiaBooking {
+  date_formatted: string;
+  is_upcoming: boolean;
+  type_label: string;
+}

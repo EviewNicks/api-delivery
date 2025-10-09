@@ -8,7 +8,13 @@ import type {
   GadgetProductEnriched,
   KrusitMenuListResponse,
   KrusitMenuItem,
-  KrusitMenuItemEnriched
+  KrusitMenuItemEnriched,
+  TripnesiaBooking,
+  TripnesiaBookingListResponse,
+  TripnesiaBookingCreateResponse,
+  TripnesiaBookingUpdateResponse,
+  TripnesiaBookingDeleteResponse,
+  TripnesiaBookingEnriched
 } from './types';
 
 const BASE_URL = '/api/kelompok-1';
@@ -344,5 +350,123 @@ export async function fetchKrusitMinuman(): Promise<KrusitMenuItemEnriched[]> {
   } catch (error) {
     if (error instanceof ApiError) throw error;
     throw new ApiError('Gagal mengambil data minuman');
+  }
+}
+
+// Kelompok 2: Tripnesia API
+
+function formatDate(dateString: string): string {
+  const date = new Date(dateString);
+  return new Intl.DateTimeFormat('id-ID', {
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric'
+  }).format(date);
+}
+
+function isUpcoming(dateString: string): boolean {
+  const bookingDate = new Date(dateString);
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  return bookingDate >= today;
+}
+
+function getTypeLabel(type: string): string {
+  const typeMap: Record<string, string> = {
+    'flight': 'Penerbangan',
+    'hotel': 'Hotel',
+    'tour': 'Paket Wisata'
+  };
+  return typeMap[type] || type;
+}
+
+function enrichBooking(booking: TripnesiaBooking): TripnesiaBookingEnriched {
+  return {
+    ...booking,
+    date_formatted: formatDate(booking.date),
+    is_upcoming: isUpcoming(booking.date),
+    type_label: getTypeLabel(booking.type)
+  };
+}
+
+export async function fetchBookings(): Promise<TripnesiaBookingEnriched[]> {
+  try {
+    const response = await fetchWithTimeout('/api/kelompok-2/bookings?action=list');
+
+    if (!response.ok) {
+      throw new ApiError(`HTTP ${response.status}: ${response.statusText}`, response.status);
+    }
+
+    const result: TripnesiaBookingListResponse = await response.json();
+    return result.data.map(enrichBooking);
+
+  } catch (error) {
+    if (error instanceof ApiError) throw error;
+    throw new ApiError('Gagal mengambil data booking');
+  }
+}
+
+export async function createBooking(data: Omit<TripnesiaBooking, 'id'>): Promise<TripnesiaBooking> {
+  try {
+    const response = await fetch('/api/kelompok-2/bookings?action=create', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data),
+    });
+
+    if (!response.ok) {
+      throw new ApiError('Gagal membuat booking', response.status);
+    }
+
+    const result: TripnesiaBookingCreateResponse = await response.json();
+    return result.data;
+
+  } catch (error) {
+    if (error instanceof ApiError) throw error;
+    throw new ApiError('Terjadi kesalahan saat membuat booking');
+  }
+}
+
+export async function updateBooking(id: number, data: Omit<TripnesiaBooking, 'id'>): Promise<TripnesiaBooking> {
+  try {
+    const response = await fetch(`/api/kelompok-2/bookings?action=update&id=${id}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ id, ...data }),
+    });
+
+    if (!response.ok) {
+      throw new ApiError('Gagal mengupdate booking', response.status);
+    }
+
+    const result: TripnesiaBookingUpdateResponse = await response.json();
+    return result.data;
+
+  } catch (error) {
+    if (error instanceof ApiError) throw error;
+    throw new ApiError('Terjadi kesalahan saat mengupdate booking');
+  }
+}
+
+export async function deleteBooking(id: number): Promise<{ success: boolean; message: string }> {
+  try {
+    const response = await fetch(`/api/kelompok-2/bookings?action=delete&id=${id}`, {
+      method: 'DELETE',
+    });
+
+    if (!response.ok) {
+      throw new ApiError('Gagal menghapus booking', response.status);
+    }
+
+    const result: TripnesiaBookingDeleteResponse = await response.json();
+    return { success: true, message: result.message };
+
+  } catch (error) {
+    if (error instanceof ApiError) throw error;
+    throw new ApiError('Terjadi kesalahan saat menghapus booking');
   }
 }
