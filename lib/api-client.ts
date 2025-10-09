@@ -16,7 +16,11 @@ import type {
   TripnesiaBookingDeleteResponse,
   TripnesiaBookingEnriched,
   HouseCafeReservation,
-  HouseCafeReservationEnriched
+  HouseCafeReservationEnriched,
+  CafekuProduct,
+  CafekuMenuListResponse,
+  CafekuProductDetailResponse,
+  CafekuProductEnriched
 } from './types';
 
 const BASE_URL = '/api/kelompok-1';
@@ -628,5 +632,180 @@ export async function deleteReservation(id: number): Promise<{ success: boolean;
   } catch (error) {
     if (error instanceof ApiError) throw error;
     throw new ApiError('Terjadi kesalahan saat menghapus reservasi');
+  }
+}
+
+// Kelompok 10: Cafeku API
+
+const CAFEKU_BASE_URL = '/api/kelompok-10';
+const CAFEKU_STORAGE_URL = 'https://dodgerblue-monkey-417412.hostingersite.com/storage/products';
+
+function resolveCafekuImageUrl(image: string): string {
+  if (image.startsWith('http://') || image.startsWith('https://')) {
+    return image;
+  }
+  return `${CAFEKU_STORAGE_URL}/${image}`;
+}
+
+function formatCafekuPrice(price: number): string {
+  return new Intl.NumberFormat('id-ID', {
+    style: 'currency',
+    currency: 'IDR',
+    minimumFractionDigits: 0,
+  }).format(price);
+}
+
+function getCafekuStockStatus(stock: number): 'in_stock' | 'low_stock' | 'out_of_stock' {
+  if (stock === 0) return 'out_of_stock';
+  if (stock < 10) return 'low_stock';
+  return 'in_stock';
+}
+
+function enrichCafekuProduct(product: CafekuProduct): CafekuProductEnriched {
+  return {
+    ...product,
+    price_formatted: formatCafekuPrice(product.price),
+    image_url: resolveCafekuImageUrl(product.image),
+    stock_status: getCafekuStockStatus(product.stock),
+    is_available: product.stock > 0,
+  };
+}
+
+export async function fetchCafekuMenu(): Promise<CafekuProductEnriched[]> {
+  try {
+    const response = await fetchWithTimeout(`${CAFEKU_BASE_URL}/menu`);
+
+    if (!response.ok) {
+      throw new ApiError(`HTTP ${response.status}: ${response.statusText}`, response.status);
+    }
+
+    const result: CafekuMenuListResponse = await response.json();
+
+    if (!result.success) {
+      throw new ApiError(result.message || 'API returned error status');
+    }
+
+    return result.data.map(enrichCafekuProduct);
+
+  } catch (error) {
+    if (error instanceof ApiError) throw error;
+    throw new ApiError('Gagal mengambil menu Cafeku');
+  }
+}
+
+export async function fetchCafekuProduct(id: number): Promise<CafekuProductEnriched> {
+  try {
+    const response = await fetchWithTimeout(`${CAFEKU_BASE_URL}/products/${id}`);
+
+    if (!response.ok) {
+      if (response.status === 404) {
+        throw new ApiError('Produk tidak ditemukan', 404);
+      }
+      throw new ApiError('Gagal mengambil detail produk', response.status);
+    }
+
+    const result: CafekuProductDetailResponse = await response.json();
+
+    if (!result.success) {
+      throw new ApiError(result.message || 'API returned error status');
+    }
+
+    return enrichCafekuProduct(result.data);
+
+  } catch (error) {
+    if (error instanceof ApiError) throw error;
+    throw new ApiError('Terjadi kesalahan saat mengambil detail produk');
+  }
+}
+
+export async function createCafekuProduct(data: FormData): Promise<CafekuProduct> {
+  try {
+    const response = await fetch(`${CAFEKU_BASE_URL}/products`, {
+      method: 'POST',
+      body: data,
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      throw new ApiError(
+        errorData.message || 'Gagal membuat produk',
+        response.status
+      );
+    }
+
+    const result: CafekuProductDetailResponse = await response.json();
+
+    if (!result.success) {
+      throw new ApiError(result.message || 'Gagal membuat produk');
+    }
+
+    return result.data;
+
+  } catch (error) {
+    if (error instanceof ApiError) throw error;
+    throw new ApiError('Terjadi kesalahan saat membuat produk');
+  }
+}
+
+export async function updateCafekuProduct(
+  id: number,
+  data: { title: string; description: string; price: number; stock: number }
+): Promise<CafekuProduct> {
+  try {
+    const response = await fetch(`${CAFEKU_BASE_URL}/products/${id}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      throw new ApiError(
+        errorData.message || 'Gagal mengupdate produk',
+        response.status
+      );
+    }
+
+    const result: CafekuProductDetailResponse = await response.json();
+
+    if (!result.success) {
+      throw new ApiError(result.message || 'Gagal mengupdate produk');
+    }
+
+    return result.data;
+
+  } catch (error) {
+    if (error instanceof ApiError) throw error;
+    throw new ApiError('Terjadi kesalahan saat mengupdate produk');
+  }
+}
+
+export async function deleteCafekuProduct(id: number): Promise<{ success: boolean; message: string }> {
+  try {
+    const response = await fetch(`${CAFEKU_BASE_URL}/products/${id}`, {
+      method: 'DELETE',
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      throw new ApiError(
+        errorData.message || 'Gagal menghapus produk',
+        response.status
+      );
+    }
+
+    const result = await response.json();
+
+    if (!result.success) {
+      throw new ApiError(result.message || 'Gagal menghapus produk');
+    }
+
+    return { success: true, message: result.message };
+
+  } catch (error) {
+    if (error instanceof ApiError) throw error;
+    throw new ApiError('Terjadi kesalahan saat menghapus produk');
   }
 }

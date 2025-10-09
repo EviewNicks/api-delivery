@@ -753,3 +753,284 @@ Solution: Type definition allows `string | null`, enrichment handles null case
 - Original Docs: `docs/kelompok-4/kelompok4.md`
 - Postman Collection: `docs/kelompok-4/Projek_Kelompok 4.postman_collection.json`
 - API Test Results: `docs/kelompok-4/hasil4.log`
+
+---
+
+## Kelompok 10: Cafeku API
+
+### `fetchCafekuMenu()`
+
+Mengambil daftar semua produk menu kafe dengan data enrichment.
+
+**Parameters**: None
+
+**Returns**: `Promise<CafekuProductEnriched[]>`
+
+**Features**:
+- Price formatting otomatis ke Rupiah
+- Image URL construction untuk storage server
+- Stock status detection (in_stock, low_stock, out_of_stock)
+- Availability flag based on stock
+- 10-second timeout protection
+
+**Response Structure**:
+```typescript
+interface CafekuProductEnriched {
+  id: number;                  // Product ID
+  image: string;               // Filename only (e.g., "espresso.jpg")
+  title: string;               // Product name
+  description: string;         // Product description
+  price: number;               // Price in Rupiah
+  stock: number;               // Stock quantity
+  created_at: string;          // ISO timestamp
+  updated_at: string;          // ISO timestamp
+  // Enriched fields:
+  price_formatted: string;     // Formatted currency (e.g., "Rp 35.000")
+  image_url: string;           // Full URL to image
+  stock_status: 'in_stock' | 'low_stock' | 'out_of_stock';
+  is_available: boolean;       // true if stock > 0
+}
+```
+
+**Example**:
+```typescript
+import { fetchCafekuMenu } from '@/lib/api-client';
+import type { CafekuProductEnriched } from '@/lib/types';
+
+const [products, setProducts] = useState<CafekuProductEnriched[]>([]);
+
+useEffect(() => {
+  async function loadMenu() {
+    try {
+      const data = await fetchCafekuMenu();
+      setProducts(data);
+    } catch (error) {
+      console.error('Failed to load menu:', error);
+    }
+  }
+  loadMenu();
+}, []);
+```
+
+---
+
+### `fetchCafekuProduct(id)`
+
+Mengambil detail produk spesifik berdasarkan ID.
+
+**Parameters**:
+- `id` (number): Product ID
+
+**Returns**: `Promise<CafekuProductEnriched>`
+
+**Throws**:
+- `ApiError` dengan status 404 jika produk tidak ditemukan
+- `ApiError` untuk errors lainnya
+
+**Example**:
+```typescript
+import { fetchCafekuProduct } from '@/lib/api-client';
+
+const product = await fetchCafekuProduct(1);
+console.log(product.title, product.price_formatted);
+```
+
+---
+
+### `createCafekuProduct(data)`
+
+Membuat produk menu baru dengan upload gambar.
+
+**Parameters**:
+- `data` (FormData): Form data dengan fields:
+  - `title` (string, min 5 chars)
+  - `description` (string, min 10 chars)
+  - `price` (number/string)
+  - `stock` (number/string)
+  - `image` (File, jpg/png, max 2MB)
+
+**Returns**: `Promise<CafekuProduct>`
+
+**Example**:
+```typescript
+import { createCafekuProduct } from '@/lib/api-client';
+
+const formData = new FormData();
+formData.append('title', 'Cappuccino');
+formData.append('description', 'Espresso with steamed milk foam');
+formData.append('price', '35000');
+formData.append('stock', '100');
+formData.append('image', imageFile);
+
+const newProduct = await createCafekuProduct(formData);
+```
+
+---
+
+### `updateCafekuProduct(id, data)`
+
+Update data produk yang sudah ada (tanpa mengubah gambar).
+
+**Parameters**:
+- `id` (number): Product ID
+- `data` (object):
+  - `title` (string, min 5 chars)
+  - `description` (string, min 10 chars)
+  - `price` (number)
+  - `stock` (number)
+
+**Returns**: `Promise<CafekuProduct>`
+
+**Example**:
+```typescript
+import { updateCafekuProduct } from '@/lib/api-client';
+
+const updated = await updateCafekuProduct(1, {
+  title: 'Cappuccino Updated',
+  description: 'New description',
+  price: 38000,
+  stock: 85
+});
+```
+
+---
+
+### `deleteCafekuProduct(id)`
+
+Menghapus produk dari database.
+
+**Parameters**:
+- `id` (number): Product ID
+
+**Returns**: `Promise<{ success: boolean; message: string }>`
+
+**Example**:
+```typescript
+import { deleteCafekuProduct } from '@/lib/api-client';
+
+const result = await deleteCafekuProduct(1);
+console.log(result.message); // "Data Berhasil Dihapus!"
+```
+
+---
+
+### Data Enrichment Details
+
+**1. Price Formatting**:
+```typescript
+// Original API response
+price: 35000 (number)
+
+// After enrichment
+price_formatted: "Rp 35.000" (Indonesian currency)
+
+// Function
+function formatCafekuPrice(price: number): string {
+  return new Intl.NumberFormat('id-ID', {
+    style: 'currency',
+    currency: 'IDR',
+    minimumFractionDigits: 0,
+  }).format(price);
+}
+```
+
+**2. Image URL Construction**:
+```typescript
+// Original API response
+image: "espresso.jpg" (filename only)
+
+// After enrichment
+image_url: "https://dodgerblue-monkey-417412.hostingersite.com/storage/products/espresso.jpg"
+
+// Function
+function resolveCafekuImageUrl(image: string): string {
+  if (image.startsWith('http://') || image.startsWith('https://')) {
+    return image; // Already full URL
+  }
+  return `https://dodgerblue-monkey-417412.hostingersite.com/storage/products/${image}`;
+}
+```
+
+**3. Stock Status Detection**:
+```typescript
+// Stock status logic
+function getCafekuStockStatus(stock: number): 'in_stock' | 'low_stock' | 'out_of_stock' {
+  if (stock === 0) return 'out_of_stock';
+  if (stock < 10) return 'low_stock';
+  return 'in_stock';
+}
+
+// Examples
+Stock 0   → "out_of_stock"
+Stock 5   → "low_stock"
+Stock 100 → "in_stock"
+```
+
+**4. Availability Flag**:
+```typescript
+is_available: stock > 0
+```
+
+---
+
+### Error Handling
+
+**Error Types**:
+```typescript
+try {
+  const products = await fetchCafekuMenu();
+} catch (error) {
+  if (error instanceof ApiError) {
+    console.log('API Error:', error.message);
+    console.log('Status Code:', error.statusCode);
+  }
+}
+```
+
+**Common Errors**:
+- `404 Not Found`: Produk tidak ditemukan
+- `422 Unprocessable Entity`: Validation error (title < 5 chars, missing image, etc.)
+- `500 Internal Server Error`: Server error
+
+**Validation Error Example**:
+```json
+{
+  "message": "The image field is required.",
+  "errors": {
+    "image": ["The image field is required."],
+    "title": ["The title field must be at least 5 characters."]
+  }
+}
+```
+
+---
+
+### Critical Requirements
+
+**Accept Header Mandatory**:
+
+Semua request ke external API HARUS include header `Accept: application/json`. Tanpa header ini, Laravel API akan return HTML response alih-alih JSON.
+
+```typescript
+headers: {
+  'Accept': 'application/json'
+}
+```
+
+Sudah di-handle otomatis di API proxy routes (`app/api/kelompok-10/`).
+
+---
+
+### Related Files
+
+**Implementation**:
+- Types: `lib/types.ts` (lines 170-199)
+- API Client: `lib/api-client.ts` (lines 638-811)
+- API Routes: `app/api/kelompok-10/menu/route.ts`, `app/api/kelompok-10/products/route.ts`, `app/api/kelompok-10/products/[id]/route.ts`
+- Components: `features/kelompok10/components/`
+- Dashboard: `app/k10/page.tsx`
+
+**Documentation**:
+- Feature Documentation: `features/kelompok10/README.md`
+- API Documentation: `docs/kelompok-10/cafeku-api-documentation.md`
+- Postman Collection: `docs/kelompok-10/cafeku-public-api.json`

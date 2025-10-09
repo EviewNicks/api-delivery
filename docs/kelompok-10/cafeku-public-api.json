@@ -1,0 +1,329 @@
+{
+  "info": {
+    "name": "Cafeku Public API",
+    "description": "API publik untuk mengakses data menu dan produk kafe Cafeku",
+    "version": "1.0.0",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "auth": {
+    "type": "noauth"
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "https://dodgerblue-monkey-417412.hostingersite.com/api",
+      "type": "string",
+      "description": "Base URL untuk Cafeku API"
+    },
+    {
+      "key": "product_id",
+      "value": "1",
+      "type": "string",
+      "description": "Sample product ID untuk testing detail endpoint"
+    }
+  ],
+  "item": [
+    {
+      "name": "Public Menu & Products",
+      "item": [
+        {
+          "name": "Get Menu (All Products)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "// Test response status",
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "// Test response structure",
+                  "pm.test(\"Response has success and data properties\", function () {",
+                  "    const responseJson = pm.response.json();",
+                  "    pm.expect(responseJson).to.have.property('success');",
+                  "    pm.expect(responseJson).to.have.property('data');",
+                  "    pm.expect(responseJson.success).to.be.true;",
+                  "});",
+                  "",
+                  "// Test data is array",
+                  "pm.test(\"Data is an array\", function () {",
+                  "    const responseJson = pm.response.json();",
+                  "    pm.expect(responseJson.data).to.be.an('array');",
+                  "});",
+                  "",
+                  "// Test product structure (if products exist)",
+                  "pm.test(\"Product has required fields\", function () {",
+                  "    const responseJson = pm.response.json();",
+                  "    if (responseJson.data.length > 0) {",
+                  "        const product = responseJson.data[0];",
+                  "        pm.expect(product).to.have.property('id');",
+                  "        pm.expect(product).to.have.property('title');",
+                  "        pm.expect(product).to.have.property('price');",
+                  "        pm.expect(product).to.have.property('stock');",
+                  "    }",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/menu",
+              "host": ["{{base_url}}"],
+              "path": ["menu"]
+            },
+            "description": "Mengambil daftar semua produk menu yang tersedia di kafe"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Product Detail",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "// Test response status",
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "// Test response structure",
+                  "pm.test(\"Response has success and data properties\", function () {",
+                  "    const responseJson = pm.response.json();",
+                  "    pm.expect(responseJson).to.have.property('success');",
+                  "    pm.expect(responseJson).to.have.property('data');",
+                  "    pm.expect(responseJson.success).to.be.true;",
+                  "});",
+                  "",
+                  "// Test product structure",
+                  "pm.test(\"Product has required fields\", function () {",
+                  "    const responseJson = pm.response.json();",
+                  "    const product = responseJson.data;",
+                  "    pm.expect(product).to.have.property('id');",
+                  "    pm.expect(product).to.have.property('image');",
+                  "    pm.expect(product).to.have.property('title');",
+                  "    pm.expect(product).to.have.property('description');",
+                  "    pm.expect(product).to.have.property('price');",
+                  "    pm.expect(product).to.have.property('stock');",
+                  "});",
+                  "",
+                  "// Test data types",
+                  "pm.test(\"Product fields have correct types\", function () {",
+                  "    const responseJson = pm.response.json();",
+                  "    const product = responseJson.data;",
+                  "    pm.expect(product.id).to.be.a('number');",
+                  "    pm.expect(product.title).to.be.a('string');",
+                  "    pm.expect(product.price).to.be.a('number');",
+                  "    pm.expect(product.stock).to.be.a('number');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/products/{{product_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["products", "{{product_id}}"]
+            },
+            "description": "Mengambil detail produk spesifik berdasarkan ID"
+          },
+          "response": []
+        },
+        {
+          "name": "Create Product (POST)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "// Test response status",
+                  "pm.test(\"Status code is 201 (created)\", function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "",
+                  "// Test successful creation",
+                  "pm.test(\"Product created successfully\", function () {",
+                  "    const responseJson = pm.response.json();",
+                  "    pm.expect(responseJson.success).to.be.true;",
+                  "    pm.expect(responseJson).to.have.property('data');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "title",
+                  "value": "Cappuccino Test",
+                  "type": "text"
+                },
+                {
+                  "key": "description",
+                  "value": "Test product created via API",
+                  "type": "text"
+                },
+                {
+                  "key": "price",
+                  "value": "35000",
+                  "type": "text"
+                },
+                {
+                  "key": "stock",
+                  "value": "100",
+                  "type": "text"
+                },
+                {
+                  "key": "image",
+                  "type": "file",
+                  "src": []
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{base_url}}/products",
+              "host": ["{{base_url}}"],
+              "path": ["products"]
+            },
+            "description": "Membuat produk baru dengan data form-data"
+          },
+          "response": []
+        },
+        {
+          "name": "Update Product (PUT)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "// Test response status",
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "// Test successful update",
+                  "pm.test(\"Product updated successfully\", function () {",
+                  "    const responseJson = pm.response.json();",
+                  "    pm.expect(responseJson.success).to.be.true;",
+                  "    pm.expect(responseJson).to.have.property('data');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "title",
+                  "value": "Cappuccino Updated",
+                  "type": "text"
+                },
+                {
+                  "key": "description",
+                  "value": "Updated product description via API",
+                  "type": "text"
+                },
+                {
+                  "key": "price",
+                  "value": "38000",
+                  "type": "text"
+                },
+                {
+                  "key": "stock",
+                  "value": "85",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{base_url}}/products/{{product_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["products", "{{product_id}}"]
+            },
+            "description": "Update data produk yang sudah ada (tanpa mengubah gambar)"
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Product (DELETE)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "// Test response status",
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "// Test successful deletion",
+                  "pm.test(\"Product deleted successfully\", function () {",
+                  "    const responseJson = pm.response.json();",
+                  "    pm.expect(responseJson.success).to.be.true;",
+                  "    pm.expect(responseJson).to.have.property('message');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/products/{{product_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["products", "{{product_id}}"]
+            },
+            "description": "Menghapus produk dari database"
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
+}

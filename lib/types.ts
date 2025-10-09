@@ -166,3 +166,34 @@ export interface HouseCafeReservationEnriched extends HouseCafeReservation {
   is_upcoming: boolean;
   status: 'upcoming' | 'past';
 }
+
+// Kelompok 10: Cafeku API Types
+
+export interface CafekuProduct {
+  id: number;
+  image: string;
+  title: string;
+  description: string;
+  price: number;
+  stock: number;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface CafekuApiResponse<T> {
+  success: boolean;
+  data: T;
+  message?: string;
+  errors?: Record<string, string[]>;
+}
+
+export interface CafekuMenuListResponse extends CafekuApiResponse<CafekuProduct[]> {}
+
+export interface CafekuProductDetailResponse extends CafekuApiResponse<CafekuProduct> {}
+
+export interface CafekuProductEnriched extends CafekuProduct {
+  price_formatted: string;
+  image_url: string;
+  stock_status: 'in_stock' | 'low_stock' | 'out_of_stock';
+  is_available: boolean;
+}
