@@ -118,5 +118,35 @@
     "blocked_command": "npm run dev",
     "suggested_command": "yarn dev",
     "reason": "Gunakan 'yarn' sebagai pengganti 'npm run' untuk workflow utama."
+  },
+  {
+    "session_id": "05b78965-03a0-406a-86ee-0d98b13bd22a",
+    "blocked_command": "npm run build",
+    "suggested_command": "yarn build",
+    "reason": "Gunakan 'yarn' sebagai pengganti 'npm run' untuk workflow utama."
+  },
+  {
+    "session_id": "a2f36006-8275-4531-ae2f-7aa167fb8f6d",
+    "blocked_command": "npm run dev",
+    "suggested_command": "yarn dev",
+    "reason": "Gunakan 'yarn' sebagai pengganti 'npm run' untuk workflow utama."
+  },
+  {
+    "session_id": "2d1ac0ff-fddf-4fa2-99f3-0cab12f6c1ab",
+    "blocked_command": "cd \"D:\\2-Project\\api-delivery\" && npm run build",
+    "suggested_command": "cd \"D:\\2-Project\\api-delivery\" && yarn build",
+    "reason": "Gunakan 'yarn' sebagai pengganti 'npm run' untuk workflow utama."
+  },
+  {
+    "session_id": "452aac73-f0a3-4446-9be6-ad6200cc11f5",
+    "blocked_command": "npm run dev",
+    "suggested_command": "yarn dev",
+    "reason": "Gunakan 'yarn' sebagai pengganti 'npm run' untuk workflow utama."
+  },
+  {
+    "session_id": "4d576cbf-d3c2-49f8-9853-c518c6316e4c",
+    "blocked_command": "echo \"Server restart required. Please run: npm run dev\"",
+    "suggested_command": "echo \"Server restart required. Please run: yarn dev\"",
+    "reason": "Gunakan 'yarn' sebagai pengganti 'npm run' untuk workflow utama."
   }
 ]

@@ -1,7 +1,16 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  images: {
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'dodgerblue-monkey-417412.hostingersite.com',
+        port: '',
+        pathname: '/storage/products/**',
+      },
+    ],
+  },
 };
 
 export default nextConfig;

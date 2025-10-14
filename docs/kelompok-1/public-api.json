@@ -1,8 +1,8 @@
 {
   "info": {
-    "name": "Maguru Public API - Product Endpoints",
-    "description": "Koleksi API test untuk public product endpoints - digunakan untuk homepage integration",
-    "version": "1.0.0",
+    "name": "Maguru Public API - Products & Categories",
+    "description": "Koleksi API test untuk public endpoints (products & categories) - digunakan untuk homepage integration dan konsumsi publik tanpa autentikasi",
+    "version": "1.1.0",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "auth": {
@@ -20,9 +20,76 @@
       "value": "67d31de1-f7a6-4e78-af34-6b2786017bb7",
       "type": "string",
       "description": "Sample product ID for testing detail endpoint"
+    },
+    {
+      "key": "category_id",
+      "value": "7f010a16-e81b-4894-adb8-28860f99d344",
+      "type": "string",
+      "description": "Valid category ID for testing (replace with actual ID)"
+    },
+    {
+      "key": "created_product_id",
+      "value": "",
+      "type": "string",
+      "description": "ID of product created via POST (auto-filled by test script)"
     }
   ],
   "item": [
+    {
+      "name": "Public Categories",
+      "item": [
+        {
+          "name": "Get All Categories",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "// Test response status",
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "// Test response structure",
+                  "pm.test(\"Response has categories array\", function () {",
+                  "    const responseJson = pm.response.json();",
+                  "    pm.expect(responseJson).to.have.property('categories');",
+                  "    pm.expect(responseJson.categories).to.be.an('array');",
+                  "});",
+                  "",
+                  "// Test category structure (if categories exist)",
+                  "pm.test(\"Category has required fields\", function () {",
+                  "    const responseJson = pm.response.json();",
+                  "    if (responseJson.categories.length > 0) {",
+                  "        const category = responseJson.categories[0];",
+                  "        pm.expect(category).to.have.property('id');",
+                  "        pm.expect(category).to.have.property('name');",
+                  "        pm.expect(category).to.have.property('color');",
+                  "        pm.expect(category).to.have.property('products');",
+                  "        pm.expect(category).to.have.property('createdAt');",
+                  "    }",
+                  "});",
+                  "",
+                  "// Test no authentication required",
+                  "pm.test(\"No authentication required\", function () {",
+                  "    pm.expect(pm.response.code).to.not.eql(401);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/categories",
+              "host": ["{{base_url}}"],
+              "path": ["api", "categories"]
+            }
+          }
+        }
+      ]
+    },
     {
       "name": "Public Products",
       "item": [
@@ -144,88 +211,6 @@
           }
         },
         {
-          "name": "Get Products with Search",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "exec": [
-                  "// Test response status",
-                  "pm.test(\"Status code is 200\", function () {",
-                  "    pm.response.to.have.status(200);",
-                  "});",
-                  "",
-                  "// Test search functionality (if results exist)",
-                  "pm.test(\"Search results contain search term\", function () {",
-                  "    const responseJson = pm.response.json();",
-                  "    if (responseJson.products.length > 0) {",
-                  "        const product = responseJson.products[0];",
-                  "        const searchTerm = 'dress';",
-                  "        const nameMatch = product.name.toLowerCase().includes(searchTerm);",
-                  "        const descMatch = product.description && product.description.toLowerCase().includes(searchTerm);",
-                  "        pm.expect(nameMatch || descMatch).to.be.true;",
-                  "    }",
-                  "});"
-                ]
-              }
-            }
-          ],
-          "request": {
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "{{base_url}}/api/public/products?search=dress",
-              "host": ["{{base_url}}"],
-              "path": ["api", "public", "products"],
-              "query": [
-                {
-                  "key": "search",
-                  "value": "dress"
-                }
-              ]
-            }
-          }
-        },
-        {
-          "name": "Get Products by Status (AVAILABLE)",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "exec": [
-                  "// Test response status",
-                  "pm.test(\"Status code is 200\", function () {",
-                  "    pm.response.to.have.status(200);",
-                  "});",
-                  "",
-                  "// Test status filtering",
-                  "pm.test(\"All products have AVAILABLE status\", function () {",
-                  "    const responseJson = pm.response.json();",
-                  "    responseJson.products.forEach(function(product) {",
-                  "        pm.expect(product.status).to.eql('AVAILABLE');",
-                  "    });",
-                  "});"
-                ]
-              }
-            }
-          ],
-          "request": {
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "{{base_url}}/api/public/products?status=AVAILABLE",
-              "host": ["{{base_url}}"],
-              "path": ["api", "public", "products"],
-              "query": [
-                {
-                  "key": "status",
-                  "value": "AVAILABLE"
-                }
-              ]
-            }
-          }
-        },
-        {
           "name": "Get Product Detail (Valid ID)",
           "event": [
             {
@@ -291,67 +276,178 @@
           }
         },
         {
-          "name": "Get Product Detail (Invalid ID)",
+          "name": "Create Product (POST)",
           "event": [
             {
               "listen": "test",
               "script": {
                 "exec": [
-                  "// Test error response status",
-                  "pm.test(\"Status code is 400 or 404\", function () {",
-                  "    pm.expect(pm.response.code).to.be.oneOf([400, 404]);",
+                  "// Test response status",
+                  "pm.test(\"Status code is 201\", function () {",
+                  "    pm.response.to.have.status(201);",
                   "});",
                   "",
-                  "// Test error structure",
-                  "pm.test(\"Response has error object\", function () {",
-                  "    const responseJson = pm.response.json();",
-                  "    pm.expect(responseJson).to.have.property('error');",
-                  "    pm.expect(responseJson.error).to.have.property('message');",
-                  "    pm.expect(responseJson.error).to.have.property('code');",
+                  "// Test product created successfully",
+                  "pm.test(\"Product created with correct data\", function () {",
+                  "    const product = pm.response.json();",
+                  "    pm.expect(product).to.have.property('id');",
+                  "    pm.expect(product.code).to.eql('TEST-PUBLIC-001');",
+                  "    pm.expect(product.name).to.eql('Test Product Public API');",
+                  "});",
+                  "",
+                  "// Save product ID for PUT and DELETE tests",
+                  "pm.test(\"Save product ID to variable\", function () {",
+                  "    const product = pm.response.json();",
+                  "    pm.collectionVariables.set('created_product_id', product.id);",
                   "});"
                 ]
               }
             }
           ],
           "request": {
-            "method": "GET",
+            "method": "POST",
             "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "code",
+                  "value": "TEST-PUBLIC-001",
+                  "type": "text"
+                },
+                {
+                  "key": "name",
+                  "value": "Test Product Public API",
+                  "type": "text"
+                },
+                {
+                  "key": "description",
+                  "value": "Testing public API creation",
+                  "type": "text"
+                },
+                {
+                  "key": "modalAwal",
+                  "value": "100000",
+                  "type": "text"
+                },
+                {
+                  "key": "currentPrice",
+                  "value": "50000",
+                  "type": "text"
+                },
+                {
+                  "key": "quantity",
+                  "value": "10",
+                  "type": "text"
+                },
+                {
+                  "key": "categoryId",
+                  "value": "{{category_id}}",
+                  "type": "text"
+                },
+                {
+                  "key": "sizes",
+                  "value": "[{\"ageCategory\":\"ADULT\",\"size\":\"S\",\"quantity\":5},{\"ageCategory\":\"ADULT\",\"size\":\"M\",\"quantity\":5}]",
+                  "type": "text"
+                },
+                {
+                  "key": "image",
+                  "description": "Product image file (JPG, PNG, or WebP - max size recommended)",
+                  "type": "file",
+                  "src": []
+                }
+              ]
+            },
             "url": {
-              "raw": "{{base_url}}/api/public/products/invalid-id-123",
+              "raw": "{{base_url}}/api/public/products",
               "host": ["{{base_url}}"],
-              "path": ["api", "public", "products", "invalid-id-123"]
+              "path": ["api", "public", "products"]
             }
           }
         },
         {
-          "name": "Get Product Detail (Non-existent ID)",
+          "name": "Update Product (PUT)",
           "event": [
             {
               "listen": "test",
               "script": {
                 "exec": [
-                  "// Test error response status",
-                  "pm.test(\"Status code is 404\", function () {",
-                  "    pm.response.to.have.status(404);",
+                  "// Test response status",
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
                   "});",
                   "",
-                  "// Test error structure",
-                  "pm.test(\"Response has error object\", function () {",
-                  "    const responseJson = pm.response.json();",
-                  "    pm.expect(responseJson).to.have.property('error');",
-                  "    pm.expect(responseJson.error.code).to.eql('NOT_FOUND');",
+                  "// Test product updated successfully",
+                  "pm.test(\"Product updated with new data\", function () {",
+                  "    const product = pm.response.json();",
+                  "    pm.expect(product.name).to.eql('Test Product Updated');",
+                  "    pm.expect(product.currentPrice).to.eql('75000');",
                   "});"
                 ]
               }
             }
           ],
           "request": {
-            "method": "GET",
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "name",
+                  "value": "Test Product Updated",
+                  "type": "text"
+                },
+                {
+                  "key": "currentPrice",
+                  "value": "75000",
+                  "type": "text"
+                },
+                {
+                  "key": "image",
+                  "description": "Updated product image file (JPG, PNG, or WebP - optional)",
+                  "type": "file",
+                  "src": [],
+                  "disabled": true
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{base_url}}/api/public/products/{{created_product_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["api", "public", "products", "{{created_product_id}}"]
+            }
+          }
+        },
+        {
+          "name": "Delete Product (DELETE)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "// Test response status",
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "// Test product deleted successfully",
+                  "pm.test(\"Product deleted successfully\", function () {",
+                  "    const response = pm.response.json();",
+                  "    pm.expect(response.success).to.be.true;",
+                  "    pm.expect(response.message).to.include('deleted');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
             "header": [],
             "url": {
-              "raw": "{{base_url}}/api/public/products/00000000-0000-0000-0000-000000000000",
+              "raw": "{{base_url}}/api/public/products/{{created_product_id}}",
               "host": ["{{base_url}}"],
-              "path": ["api", "public", "products", "00000000-0000-0000-0000-000000000000"]
+              "path": ["api", "public", "products", "{{created_product_id}}"]
             }
           }
         }

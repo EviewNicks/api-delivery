@@ -6,7 +6,7 @@ import { usePathname } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { Separator } from '@/components/ui/separator';
-import { Menu, Home } from 'lucide-react';
+import { Menu } from 'lucide-react';
 
 interface NavItem {
   title: string;
@@ -17,15 +17,15 @@ interface NavItem {
 const navItems: NavItem[] = [
   { title: 'Dashboard', href: '/', status: 'implemented' },
   { title: 'Kelompok 1 - Rental Baju', href: '/k1', status: 'implemented' },
-  { title: 'Kelompok 2', href: '/k2', status: 'pending' },
-  { title: 'Kelompok 3', href: '/k3', status: 'pending' },
-  { title: 'Kelompok 4', href: '/k4', status: 'pending' },
+  { title: 'Kelompok 2 - Tripnesia', href: '/k2', status: 'implemented' },
+  { title: 'Kelompok 3 - GadgetHouse', href: '/k3', status: 'implemented' },
+  { title: 'Kelompok 4 - Krusit F&B', href: '/k4', status: 'implemented' },
   { title: 'Kelompok 5', href: '/k5', status: 'pending' },
-  { title: 'Kelompok 6', href: '/k6', status: 'pending' },
+  { title: 'Kelompok 6 - House Cafe', href: '/k6', status: 'implemented' },
   { title: 'Kelompok 7', href: '/k7', status: 'pending' },
   { title: 'Kelompok 8', href: '/k8', status: 'pending' },
   { title: 'Kelompok 9', href: '/k9', status: 'pending' },
-  { title: 'Kelompok 10', href: '/k10', status: 'pending' },
+  { title: 'Kelompok 10 - Cafeku', href: '/k10', status: 'implemented' },
 ];
 
 function SidebarContent() {

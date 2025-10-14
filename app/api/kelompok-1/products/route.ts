@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-const EXTERNAL_API = 'https://rental-baju.netlify.app/api/public/products';
+const EXTERNAL_API = 'https://sprightly-starburst-ae6a2a.netlify.app/api/public/products';
 const TIMEOUT = 20000;
 
 async function fetchWithTimeout(url: string, timeout = TIMEOUT): Promise<Response> {
@@ -54,6 +54,31 @@ export async function GET(request: NextRequest) {
     return NextResponse.json(data);
   } catch (error) {
     console.error('API Proxy Error:', error);
+    return NextResponse.json(
+      { error: error instanceof Error ? error.message : 'Internal server error' },
+      { status: 500 }
+    );
+  }
+}
+
+export async function POST(request: NextRequest) {
+  try {
+    const formData = await request.formData();
+
+    const response = await fetch(EXTERNAL_API, {
+      method: 'POST',
+      body: formData,
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({ error: 'Failed to create product' }));
+      return NextResponse.json(errorData, { status: response.status });
+    }
+
+    const data = await response.json();
+    return NextResponse.json(data, { status: 201 });
+  } catch (error) {
+    console.error('Create Product Error:', error);
     return NextResponse.json(
       { error: error instanceof Error ? error.message : 'Internal server error' },
       { status: 500 }
