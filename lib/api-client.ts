@@ -6,6 +6,9 @@ import type {
   CategoryListResponse,
   GadgetRecommendationsResponse,
   GadgetProductEnriched,
+  GadgetProductCreate,
+  GadgetProductUpdate,
+  GadgetOperationResponse,
   KrusitMenuListResponse,
   KrusitMenuItem,
   KrusitMenuItemEnriched,
@@ -36,12 +39,12 @@ export class ApiError extends Error {
   }
 }
 
-async function fetchWithTimeout(url: string, timeout = TIMEOUT): Promise<Response> {
+async function fetchWithTimeout(url: string, options: RequestInit = {}, timeout = TIMEOUT): Promise<Response> {
   const controller = new AbortController();
   const timeoutId = setTimeout(() => controller.abort(), timeout);
 
   try {
-    const response = await fetch(url, { signal: controller.signal });
+    const response = await fetch(url, { ...options, signal: controller.signal });
     clearTimeout(timeoutId);
     return response;
   } catch (error) {
@@ -246,6 +249,83 @@ export async function fetchGadgetRecommendations(): Promise<GadgetProductEnriche
   } catch (error) {
     if (error instanceof ApiError) throw error;
     throw new ApiError('Gagal mengambil rekomendasi produk');
+  }
+}
+
+export async function createGadgetProduct(data: GadgetProductCreate): Promise<GadgetOperationResponse> {
+  try {
+    const response = await fetchWithTimeout('/api/kelompok-3/recomendations', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data),
+    });
+
+    if (!response.ok) {
+      throw new ApiError(`HTTP ${response.status}: ${response.statusText}`, response.status);
+    }
+
+    const result: GadgetOperationResponse = await response.json();
+
+    if (result.status === 'error') {
+      throw new ApiError(result.message || 'API returned error status');
+    }
+
+    return result;
+  } catch (error) {
+    if (error instanceof ApiError) throw error;
+    throw new ApiError('Gagal membuat produk gadget');
+  }
+}
+
+export async function updateGadgetProduct(data: GadgetProductUpdate): Promise<GadgetOperationResponse> {
+  try {
+    const response = await fetchWithTimeout('/api/kelompok-3/recomendations', {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data),
+    });
+
+    if (!response.ok) {
+      throw new ApiError(`HTTP ${response.status}: ${response.statusText}`, response.status);
+    }
+
+    const result: GadgetOperationResponse = await response.json();
+
+    if (result.status === 'error') {
+      throw new ApiError(result.message || 'API returned error status');
+    }
+
+    return result;
+  } catch (error) {
+    if (error instanceof ApiError) throw error;
+    throw new ApiError('Gagal mengupdate produk gadget');
+  }
+}
+
+export async function deleteGadgetProduct(id: string): Promise<GadgetOperationResponse> {
+  try {
+    const response = await fetchWithTimeout(`/api/kelompok-3/recomendations?id=${id}`, {
+      method: 'DELETE',
+    });
+
+    if (!response.ok) {
+      throw new ApiError(`HTTP ${response.status}: ${response.statusText}`, response.status);
+    }
+
+    const result: GadgetOperationResponse = await response.json();
+
+    if (result.status === 'error') {
+      throw new ApiError(result.message || 'API returned error status');
+    }
+
+    return result;
+  } catch (error) {
+    if (error instanceof ApiError) throw error;
+    throw new ApiError('Gagal menghapus produk gadget');
   }
 }
 

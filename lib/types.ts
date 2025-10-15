@@ -85,6 +85,36 @@ export interface GadgetProductEnriched extends GadgetProductSimplified {
   category_guess?: string;
 }
 
+export interface GadgetProductCreate {
+  product_id: string;
+  product_title: string;
+  product_price: string;
+  product_img1: string;
+}
+
+export interface GadgetProductUpdate {
+  product_id: string;
+  product_title: string;
+  product_price: string;
+  product_img1: string;
+}
+
+export interface GadgetProductDelete {
+  product_id: string;
+}
+
+export interface GadgetOperationResponse {
+  status: string;
+  message: string;
+  data?: GadgetProductSimplified;
+}
+
+export interface GadgetError {
+  status: string;
+  error: string;
+  message: string;
+}
+
 // Kelompok 4: Krusit API Types
 
 export interface KrusitMenuItem {

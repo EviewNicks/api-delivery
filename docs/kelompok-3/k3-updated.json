@@ -1,0 +1,163 @@
+{
+	"info": {
+		"_postman_id": "f903570b-ab87-424d-a804-bc038d982342",
+		"name": "Kelompok 3 Gadget house",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json",
+		"_exporter_id": "48554168",
+		"_collection_link": "https://lthifaazizah-1165461.postman.co/workspace/Andi-Azizah-Lathifa's-Workspace~36cb5643-d080-4f37-8ab0-4d316f4c1552/collection/48554168-f903570b-ab87-424d-a804-bc038d982342?action=share&source=collection_link&creator=48554168"
+	},
+	"item": [
+		{
+			"name": "list rekomendasi",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": {
+						"token": "Tokengadgethouse"
+					}
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://www.cvjayatehnik.com/api/recomendations.php?action=read",
+					"protocol": "http",
+					"host": [
+						"www",
+						"cvjayatehnik",
+						"com"
+					],
+					"path": [
+						"api",
+						"recomendations.php"
+					],
+					"query": [
+						{
+							"key": "action",
+							"value": "list"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create rekomendasi",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": {
+						"token": "Tokengadgethouse"
+					}
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n   \"product_id\": \"61\",\r\n    \"product_title\": \"Samsung A15 5G\",\r\n    \"product_price\": \"2800000\",\r\n    \"product_img1\": \"LM 1.webp\"\r\n    \r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://www.cvjayatehnik.com/api/recomendations.php?action=create",
+					"protocol": "http",
+					"host": [
+						"www",
+						"cvjayatehnik",
+						"com"
+					],
+					"path": [
+						"api",
+						"recomendations.php"
+					],
+					"query": [
+						{
+							"key": "action",
+							"value": "create"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "delete rekomendasi",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": {
+						"token": "Tokengadgethouse"
+					}
+				},
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://cvjayatehnik.com/api/recomendations.php?action=delete&id=61",
+					"protocol": "http",
+					"host": [
+						"cvjayatehnik",
+						"com"
+					],
+					"path": [
+						"api",
+						"recomendations.php"
+					],
+					"query": [
+						{
+							"key": "action",
+							"value": "delete"
+						},
+						{
+							"key": "id",
+							"value": "61"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update rekomendasi",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": {
+						"token": "Tokengadgethouse"
+					}
+				},
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"product_id\": \"62\",\r\n    \"product_title\": \"Logitech M220 Mouse Wireless Silent Click\",\r\n    \"product_price\": \"189000\",\r\n    \"product_img1\": \"LM 1.webp\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://cvjayatehnik.com/api/recomendations.php?action=update",
+					"protocol": "http",
+					"host": [
+						"cvjayatehnik",
+						"com"
+					],
+					"path": [
+						"api",
+						"recomendations.php"
+					],
+					"query": [
+						{
+							"key": "action",
+							"value": "update"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

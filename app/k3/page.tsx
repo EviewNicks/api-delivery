@@ -3,11 +3,20 @@
 import { useState, useEffect } from 'react';
 import { fetchGadgetRecommendations } from '@/lib/api-client';
 import type { GadgetProductEnriched } from '@/lib/types';
+import AddProductForm from '@/components/AddProductForm';
+import EditProductForm from '@/components/EditProductForm';
+import DeleteConfirmation from '@/components/DeleteConfirmation';
 
 export default function Kelompok3Page() {
   const [products, setProducts] = useState<GadgetProductEnriched[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  // CRUD states
+  const [showAddForm, setShowAddForm] = useState(false);
+  const [editingProduct, setEditingProduct] = useState<GadgetProductEnriched | null>(null);
+  const [deletingProduct, setDeletingProduct] = useState<{ id: string; name: string } | null>(null);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
   useEffect(() => {
     async function loadProducts() {
@@ -25,6 +34,42 @@ export default function Kelompok3Page() {
 
     loadProducts();
   }, []);
+
+  // Helper function to load products
+  async function loadProducts() {
+    try {
+      setLoading(true);
+      setError(null);
+      const data = await fetchGadgetRecommendations();
+      setProducts(data);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to load products');
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  // CRUD operations
+  const handleAddSuccess = () => {
+    setShowAddForm(false);
+    setSuccessMessage('Produk berhasil ditambahkan!');
+    loadProducts(); // Refresh data
+    setTimeout(() => setSuccessMessage(null), 3000);
+  };
+
+  const handleEditSuccess = () => {
+    setEditingProduct(null);
+    setSuccessMessage('Produk berhasil diperbarui!');
+    loadProducts(); // Refresh data
+    setTimeout(() => setSuccessMessage(null), 3000);
+  };
+
+  const handleDeleteSuccess = () => {
+    setDeletingProduct(null);
+    setSuccessMessage('Produk berhasil dihapus!');
+    loadProducts(); // Refresh data
+    setTimeout(() => setSuccessMessage(null), 3000);
+  };
 
   if (loading) {
     return (
@@ -74,18 +119,43 @@ export default function Kelompok3Page() {
   return (
     <div className="p-6">
       <div className="mb-6">
-        <h1 className="text-3xl font-bold text-neutral-800">
-          Kelompok 3: Rekomendasi Produk GadgetHouse
-        </h1>
-        <p className="text-neutral-600 mt-2">
-          Temukan gadget dan elektronik terbaik untuk kebutuhan Anda
-        </p>
-      </div>
+        <div className="flex justify-between items-start mb-2">
+          <div>
+            <h1 className="text-3xl font-bold text-neutral-800">
+              Kelompok 3: Rekomendasi Produk GadgetHouse
+            </h1>
+            <p className="text-neutral-600 mt-2">
+              Temukan gadget dan elektronik terbaik untuk kebutuhan Anda
+            </p>
+          </div>
+          <button
+            onClick={() => setShowAddForm(true)}
+            className="bg-primary-500 hover:bg-primary-600 text-white px-4 py-2 rounded-md font-medium transition-colors flex items-center gap-2"
+          >
+            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+            </svg>
+            Tambah Produk
+          </button>
+        </div>
 
-      <div className="mb-4">
-        <span className="text-sm text-neutral-600">
-          Menampilkan {products.length} produk
-        </span>
+        {/* Success Message */}
+        {successMessage && (
+          <div className="bg-green-50 border border-green-200 rounded-lg p-3 mb-4">
+            <div className="flex items-center">
+              <svg className="w-5 h-5 text-green-500 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+              </svg>
+              <p className="text-sm text-green-700">{successMessage}</p>
+            </div>
+          </div>
+        )}
+
+        <div className="flex justify-between items-center">
+          <span className="text-sm text-neutral-600">
+            Menampilkan {products.length} produk
+          </span>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -119,9 +189,20 @@ export default function Kelompok3Page() {
                 {product.price_formatted}
               </p>
 
-              <button className="w-full bg-primary-500 hover:bg-primary-600 active:bg-primary-700 text-white px-4 py-2 rounded-md font-medium transition-colors">
-                Lihat Detail
-              </button>
+              <div className="flex gap-2">
+                <button
+                  onClick={() => setEditingProduct(product)}
+                  className="flex-1 bg-neutral-100 hover:bg-neutral-200 text-neutral-700 px-3 py-2 rounded-md font-medium transition-colors text-sm"
+                >
+                  Edit
+                </button>
+                <button
+                  onClick={() => setDeletingProduct({ id: product.product_id, name: product.product_title })}
+                  className="flex-1 bg-red-100 hover:bg-red-200 text-red-700 px-3 py-2 rounded-md font-medium transition-colors text-sm"
+                >
+                  Hapus
+                </button>
+              </div>
             </div>
           </div>
         ))}
@@ -131,6 +212,31 @@ export default function Kelompok3Page() {
         <div className="text-center py-12">
           <p className="text-neutral-600">Tidak ada produk tersedia</p>
         </div>
+      )}
+
+      {/* CRUD Modals */}
+      {showAddForm && (
+        <AddProductForm
+          onSuccess={handleAddSuccess}
+          onCancel={() => setShowAddForm(false)}
+        />
+      )}
+
+      {editingProduct && (
+        <EditProductForm
+          product={editingProduct}
+          onSuccess={handleEditSuccess}
+          onCancel={() => setEditingProduct(null)}
+        />
+      )}
+
+      {deletingProduct && (
+        <DeleteConfirmation
+          productId={deletingProduct.id}
+          productName={deletingProduct.name}
+          onSuccess={handleDeleteSuccess}
+          onCancel={() => setDeletingProduct(null)}
+        />
       )}
     </div>
   );
